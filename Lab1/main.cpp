@@ -104,7 +104,7 @@ void ConstantEquationInfinityRootsTest_8(){
 }
 
 void WriteToFileTest_9(){
-    vector<float> roots = {3,4};
+    vector<float> roots = {3,4};// output: "The equation has two roots: 3;4"
     
     ofstream output("output.txt");
 
@@ -117,10 +117,10 @@ void WriteToFileTest_9(){
 }
 
 void ReadFromFileTest_10(){
-    ifstream input("input.txt");
+    ifstream input("input.txt");// odds: {1 , -4, 4}
 
     if(!input.is_open()){
-        cout << "| TEST 9\tDENY\t |\n";
+        cout << "| TEST 10\tDENY\t |\n";
         return;
     }
 
