@@ -9,4 +9,4 @@ enum class RootsCount {ZERO, ONE, TWO, INF, ERROR, SIZE};
 
 std::vector<float> SolveEquation(float const * odds, RootsCount &num);
 void WriteRootsToStream(std::ostream &output, std::vector<float> const &roots, RootsCount const &num);
-float * ReadOddsStream(std::istream &input,  char const &separator = ';');
+float * ReadOddsFromStream(std::istream &input,  char const &separator = ';');

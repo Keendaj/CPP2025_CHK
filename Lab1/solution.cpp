@@ -36,6 +36,11 @@ std::vector<float> SolveQuadratic(float const* odds,RootsCount &num){
 
         roots.push_back( (-odds[1] - D) / (2 * odds[0]) );
         roots.push_back( (-odds[1] + D) / (2 * odds[0]) );
+        if(roots[1] < roots[0]){
+            float t = roots[1];
+            roots[1] = roots[0];
+            roots[0] = t;
+        }
     }
     else if(D == 0){
         num = RootsCount::ONE;
@@ -48,7 +53,7 @@ std::vector<float> SolveQuadratic(float const* odds,RootsCount &num){
 }
 
 std::vector<float> SolveEquation(float const * odds, RootsCount &num){
-    if(odds = nullptr){
+    if(odds == nullptr){
         num = RootsCount::ERROR;
         return {};
     }
@@ -71,7 +76,7 @@ std::vector<float> SolveEquation(float const * odds, RootsCount &num){
     return roots;
 }
 
-void WriteRootsStream(std::ostream &output, std::vector<float> const &roots, RootsCount const &num){
+void WriteRootsToStream(std::ostream &output, std::vector<float> const &roots, RootsCount const &num){
     switch (num)
     {
     case RootsCount::ZERO:
@@ -81,7 +86,7 @@ void WriteRootsStream(std::ostream &output, std::vector<float> const &roots, Roo
             output << "The equation has one root: " << roots[0];
             break;
         case RootsCount::TWO:
-            output << "The equation has two roots: " << roots[0] << ", " << roots[1];
+            output << "The equation has two roots: " << roots[0] << ";" << roots[1];
             break;
         case RootsCount::INF:
             output << "The equaton has oo roots";
@@ -95,9 +100,9 @@ void WriteRootsStream(std::ostream &output, std::vector<float> const &roots, Roo
     }
 }
 
-float * ReadOddsStream(std::istream &input,  char const &separator = ';'){
+float * ReadOddsFromStream(std::istream &input,  char const &separator){
     std::string line;
-    float odds[3];
+    float *odds = new float[3];
     
     
     if(!std::getline(input, line)){
@@ -109,6 +114,10 @@ float * ReadOddsStream(std::istream &input,  char const &separator = ';'){
     int i = 0;
 
     while (std::getline(ss,odd,separator)) {
+        if(i == 3){
+            std::cerr << "You entered more than 3 odds";
+            break;
+        }
         odds[i] = std::stof(odd);
         i++;
     }
