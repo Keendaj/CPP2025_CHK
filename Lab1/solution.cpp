@@ -48,6 +48,10 @@ std::vector<float> SolveQuadratic(float const* odds,RootsCount &num){
 }
 
 std::vector<float> SolveEquation(float const * odds, RootsCount &num){
+    if(odds = nullptr){
+        num = RootsCount::ERROR;
+        return {};
+    }
     TypesOfEquation type = DetermineType(odds);
     std::vector<float> roots; 
     switch (type)
@@ -67,3 +71,47 @@ std::vector<float> SolveEquation(float const * odds, RootsCount &num){
     return roots;
 }
 
+void WriteRootsStream(std::ostream &output, std::vector<float> const &roots, RootsCount const &num){
+    switch (num)
+    {
+    case RootsCount::ZERO:
+        output << "The equation has no roots";
+            break;
+        case RootsCount::ONE:
+            output << "The equation has one root: " << roots[0];
+            break;
+        case RootsCount::TWO:
+            output << "The equation has two roots: " << roots[0] << ", " << roots[1];
+            break;
+        case RootsCount::INF:
+            output << "The equaton has oo roots";
+        default:
+            std::cerr << "Something went wrong while solving equation";
+            break;
+    }
+    output << "\n";
+    if (output.fail()) {
+        std::cerr << "Couldn`t write in this stream\n";
+    }
+}
+
+float * ReadOddsStream(std::istream &input,  char const &separator = ';'){
+    std::string line;
+    float odds[3];
+    
+    
+    if(!std::getline(input, line)){
+        return nullptr;
+    }
+
+    std::stringstream ss(line);
+    std::string odd;
+    int i = 0;
+
+    while (std::getline(ss,odd,separator)) {
+        odds[i] = std::stof(odd);
+        i++;
+    }
+    
+    return odds;
+}
