@@ -242,8 +242,8 @@ std::vector<Solution> BadStudent::solveHomework(Homework &hw){
     std::vector<Solution> solutions;
 
     Answer ans;
-    ans.roots_num = RootsCount::ONE;
-    ans.roots = {0};
+    ans.roots_num = RootsCount::ZERO;
+    ans.roots = {};
 
     Solution sol;
     sol.setName(name);
@@ -273,8 +273,8 @@ std::vector<Solution> AverageStudent::solveHomework(Homework &hw){
         sol.setOdds(hw.getEquationByNum(i)); 
 
         if(MakingError()){
-            ans.roots_num = RootsCount::ONE;
-            ans.roots = {0};
+            ans.roots_num = RootsCount::ZERO;
+            ans.roots = {};
         }
 
         else{
