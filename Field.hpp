@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include "Ball.hpp"
 #include "Slider.hpp"
+#include "Block.hpp"
 #include <vector>
 #include <utility>
 #include <random>
@@ -17,12 +18,15 @@ class Field
 		bool isGameOver() const { return health <= 0; }
 		int getScore() const { return score; }
 
+		void CreateRandomField(int cols, int rows);
+		
 	private:
 		void handleBallLost();
-
+		void CleanDestroyedBlocks();
 		Ball *ball;
 		Slider *slider;
 		
+		std::vector<BaseBlock*> blocks;
 		std::pair<int, int> windowSize;
 		bool hasSafetyNet = false;
 		float randomTrajectoryTimer = 0.0f;

@@ -56,6 +56,7 @@ int main(int argc, char* argv[]) {
         true);
    
     Field gameField(ball.get(), slider.get(), {WINDOW_WIDTH, WINDOW_HEIGHT});
+    gameField.CreateRandomField(10, 7);
 
     while (isRunning) {
         auto currentTime = std::chrono::high_resolution_clock::now();

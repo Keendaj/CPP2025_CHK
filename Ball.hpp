@@ -24,7 +24,7 @@ class Ball
 		float getSize() const { return radius; };
 		void setSize(float radius) { this->radius = radius; };
 
-		void setSpeed(float speed) { baseSpeed = speed; }
+		void setSpeed(float speed) { baseSpeed = speed; normalizeVelocity(); }
 		float getSpeed() const { return baseSpeed; }
 
 		bool getSticky() const { return isSticky; }

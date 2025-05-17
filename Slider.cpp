@@ -2,8 +2,6 @@
 #include <iostream>
 
 void Slider::drawSlider(SDL_Renderer* renderer) const {
-	if (!renderer) return;
-
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
 	SDL_Rect slider = getRect();
