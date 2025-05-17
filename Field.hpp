@@ -11,11 +11,9 @@ class Field
 	public:
 		Field(Ball *ball, Slider *slider, int windowWidth, int windowHeight);
 		Field(Ball* ball, Slider* slider, std::pair<int, int> windowSize);
-		~Field();
 		
 		void Update(SideToSlide sliderMove, float deltaTime);
 		void Draw(SDL_Renderer* renderer);
-		void InitializeBlocks(int rows, int cols);
 		bool isGameOver() const { return health <= 0; }
 		int getScore() const { return score; }
 

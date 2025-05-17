@@ -1,14 +1,13 @@
 #include "Slider.hpp"
-
-
+#include <iostream>
 
 void Slider::drawSlider(SDL_Renderer* renderer) const {
+	if (!renderer) return;
+
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
 	SDL_Rect slider = getRect();
-
 	SDL_RenderFillRect(renderer, &slider);
-
 }
 
 void Slider::updateSlider(SideToSlide side_to_move, float delta_time) {
@@ -25,12 +24,13 @@ void Slider::updateSlider(SideToSlide side_to_move, float delta_time) {
 			return;
 	}
 
+	float maxX = static_cast<float>(windowWidth) - size.first;
 	float newPos = pos.first + movement;
-	if (newPos < 0) {
-		pos.first = 0;
+	if (newPos < 0.0f) {
+		pos.first = 0.0f;
 	} 
-	else if (newPos > windowWidth - size.first) {
-		pos.first = windowWidth - size.first;
+	else if (newPos > maxX) {
+		pos.first = maxX;
 	} 
 	else {
 		pos.first = newPos;

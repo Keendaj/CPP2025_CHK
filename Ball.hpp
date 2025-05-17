@@ -5,10 +5,8 @@
 class Ball
 {
 	public:
-		Ball(float x, float y, float radius) 
-			: pos({x, y}), velocity({0, -200}), radius(radius), baseSpeed(200.0f) {};
-		Ball(std::pair<float, float> pos, float radius) 
-			: pos(pos), velocity({0, -200}), radius(radius), baseSpeed(200.0f) {};
+		Ball(float x, float y, float x_velocity, float y_velocity, float baseSpeed, float radius, bool isSticky);
+		Ball(std::pair<float, float> pos, std::pair<float, float> velocity, float baseSpeed, float radius, bool isSticky);
 
 		void drawBall(SDL_Renderer *renderer);
 		void updateBall(float delta_time);
@@ -30,7 +28,7 @@ class Ball
 		float getSpeed() const { return baseSpeed; }
 
 		bool getSticky() const { return isSticky; }
-		void setSticky(bool isSticky) { this->isSticky = isSticky; }
+		void setSticky(bool sticky) { this->isSticky = sticky; }
 
 		void setWindowSize(int width, int height) { windowWidth = width; windowHeight = height; }
 

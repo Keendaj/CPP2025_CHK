@@ -1,22 +1,41 @@
 #include "Ball.hpp"
 #include <cmath>
+#include <algorithm>
+#define _USE_MATH_DEFINES
+
+Ball::Ball(float x, float y, float x_velocity, float y_velocity, float baseSpeed, float radius, bool isSticky)
+    : pos({ x, y }), velocity({ x_velocity, y_velocity }), baseSpeed(baseSpeed), radius(radius), isSticky(isSticky)
+{
+    normalizeVelocity();
+}
+
+Ball::Ball(std::pair<float, float> pos, std::pair<float, float> velocity, float baseSpeed, float radius, bool isSticky)
+    : pos(pos), velocity(velocity), baseSpeed(baseSpeed), radius(radius), isSticky(isSticky)
+{
+    normalizeVelocity();
+}
+
 
 void Ball::drawBall(SDL_Renderer* renderer) {
-    float centerX = pos.first;
-    float centerY = pos.second;
+    int centerX = static_cast<int>(pos.first);
+    int centerY = static_cast<int>(pos.second);
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-    for (float y = -radius; y <= radius; y++) {
-        float dx = static_cast<float>(sqrt(radius * radius - y * y));
-        float x1 = centerX - dx;
-        float x2 = centerX + dx;
+    for (int y = -radius; y <= radius; y++) {
+        int dx = static_cast<int>(sqrt(radius * radius - y * y));
+        int x1 = centerX - dx;
+        int x2 = centerX + dx;
+        int yDraw = centerY + y;
 
-        SDL_RenderDrawLine(renderer, x1, centerY + y, x2, centerY + y);
+        SDL_RenderDrawLine(renderer, x1, yDraw, x2, yDraw);
     }
 }
 
+
 void Ball::updateBall(float delta_time) {
+    if (isSticky) return;
+
     pos.first += velocity.first * delta_time;
     pos.second += velocity.second * delta_time;
 
@@ -44,6 +63,7 @@ void Ball::setVelocity(std::pair<float, float> new_velocity) {
 }
 
 void Ball::launch(float angle) {
+    isSticky = false;
     float radians = angle * M_PI / 180.0f;
     velocity.first = baseSpeed * std::sin(radians);
     velocity.second = -baseSpeed * std::cos(radians);

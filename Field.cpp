@@ -4,15 +4,11 @@
 
 Field::Field(Ball* ball, Slider* slider, int windowWidth, int windowHeight) 
     : ball(ball), slider(slider), windowSize({ windowWidth, windowHeight })
-    { ball->setWindowSize(windowWidth, windowHeight); }
+    { ball->setWindowSize(windowWidth, windowHeight); slider->setWindowSize(windowWidth, windowHeight); }
 
 Field::Field(Ball* ball, Slider* slider, std::pair<int, int> windowSize) 
-    : ball(ball), slider(slider), windowSize(windowSize) {}
-
-Field::~Field() {
-    delete ball;
-    delete slider;
-}
+    : ball(ball), slider(slider), windowSize(windowSize)
+    { ball->setWindowSize(windowSize.first, windowSize.second); slider->setWindowSize(windowSize.first, windowSize.second); }
 
 void Field::Update(SideToSlide sliderMove, float deltaTime)
 {
@@ -22,23 +18,28 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
     auto BallPos = ball->getPos();
 
     slider->updateSlider(sliderMove, deltaTime);
+    if (BallPos.second - ball->getSize() >= windowSize.second) {
+        handleBallLost();
+    }
+    else {
+        SDL_Rect sliderRect = slider->getRect();
+        if (ball->checkCollisionWithRect(&sliderRect)) {
+            if (ball->getSticky()) {
+                ball->setPos(slider->getPos().first + slider->getSize().first / 2.0, slider->getPos().second - ball->getSize() / 2);
+                ball->setVelocity(0, 0);
+            }
+            else {
+                float hitPoint = (BallPos.first - slider->getPos().first) / slider->getSize().first;
+                float angle = (hitPoint - 0.5f) * 60.0f;
+                float speed = ball->getSpeed();
 
-    SDL_Rect sliderRect = slider->getRect();
-    if (ball->checkCollisionWithRect(&sliderRect)) {
-        if (ball->getSticky()) {
-            ball->setPos(slider->getPos().first + slider->getSize().first / 2.0, slider->getPos().second - ball->getSize());
-            ball->setVelocity(0, 0);
-        } 
-        else {
-            float hitPoint = (BallPos.first - slider->getPos().first) / slider->getSize().first;
-            float angle = (hitPoint - 0.5f) * 60.0f;
-            float speed = ball->getSpeed();
-            
-            float radians = angle * M_PI / 180.0f;
-            ball->setVelocity(speed * std::sin(radians), -speed * std::cos(radians));
-            ball->setPos(BallPos.first, slider->getPos().second - ball->getSize());
+                float radians = angle * M_PI / 180.0f;
+                ball->setVelocity(speed * std::sin(radians), -speed * std::cos(radians));
+                ball->setPos(BallPos.first, slider->getPos().second - ball->getSize());
+            }
         }
     }
+    
 }
 
 void Field::Draw(SDL_Renderer* renderer)
@@ -50,12 +51,7 @@ void Field::Draw(SDL_Renderer* renderer)
 void Field::handleBallLost() {
     health--;
     if (!isGameOver()) {
-        ball->setPos(400, 550);
-        ball->setVelocity(0, -300);
-        ball->setSticky(false);
+        ball->setPos(slider->getPos().first + slider->getSize().first / 2.0, slider->getPos().second - 10);
+        ball->setSticky(true);
     }
-}
-
-void Field::InitializeBlocks(int rows, int cols)
-{
 }

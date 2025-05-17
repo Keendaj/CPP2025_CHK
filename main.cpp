@@ -4,6 +4,7 @@
 #include "Field.hpp"
 #include <chrono>
 #include <iostream>
+#include <memory>
 
 int main(int argc, char* argv[]) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -45,11 +46,16 @@ int main(int argc, char* argv[]) {
 
     bool isRunning = true;
     auto lastTime = std::chrono::high_resolution_clock::now();
-
-    Ball* ball = new Ball({WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT - 100}, 10);
-    Slider* slider = new Slider({WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT - 50}, {100, 20}, 400.0f);
-    Field gameField(ball, slider, {WINDOW_HEIGHT, WINDOW_WIDTH});
-    gameField.InitializeBlocks(5, 10);
+    std::unique_ptr<Slider> slider = std::make_unique<Slider>(std::make_pair(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT - 50),
+        std::make_pair(100, 20), 600.0f);
+    std::unique_ptr<Ball> ball = std::make_unique<Ball>(
+        std::make_pair(slider.get()->getPos().first + slider.get()->getSize().first / 2.0, slider.get()->getPos().second - 10),
+        std::make_pair(0.0, 400.0),
+        400,
+        10,
+        true);
+   
+    Field gameField(ball.get(), slider.get(), {WINDOW_WIDTH, WINDOW_HEIGHT});
 
     while (isRunning) {
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -78,6 +84,7 @@ int main(int argc, char* argv[]) {
                 ball->launch(0);
             }
         }
+
         gameField.Update(sliderMove, deltaTime);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

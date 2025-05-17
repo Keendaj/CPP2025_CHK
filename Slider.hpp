@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <utility>
+#include <stdexcept>
 
 enum class SideToSlide
 {
@@ -11,9 +12,12 @@ class Slider
 {
 	public:
 		Slider(std::pair<float, float> pos, std::pair<float, float> size, float moveSpeed) 
-			: pos(pos), size(size), moveSpeed(moveSpeed) {};
+			: pos(pos), size(size), moveSpeed(moveSpeed), windowWidth(0), windowHeight(0) 
+		{ }
+
 		Slider(float x_pos, float y_pos, float x_size, float y_size, float moveSpeed)
-			: pos({ x_pos, y_pos }), size({ x_size, y_size }), moveSpeed(moveSpeed) {};
+			: pos({ x_pos, y_pos }), size({ x_size, y_size }), moveSpeed(moveSpeed),
+			 windowWidth(0), windowHeight(0)  {};
 
 		void drawSlider(SDL_Renderer* renderer) const;
 		void updateSlider(SideToSlide side_to_move, float delta_time);
