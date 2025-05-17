@@ -1,0 +1,42 @@
+#pragma once
+#include <SDL2/SDL.h>
+#include <utility>
+
+enum class SideToSlide
+{
+	Slider_Left, Slider_Right, Stop
+};
+
+class Slider
+{
+	public:
+		Slider(std::pair<float, float> pos, std::pair<float, float> size, float moveSpeed) 
+			: pos(pos), texture_size(size), hitbox_size(size), moveSpeed(moveSpeed) {};
+		Slider(float x_pos, float y_pos, float x_size, float y_size, float moveSpeed)
+			: pos({ x_pos, y_pos }), texture_size({ x_size, y_size }), hitbox_size(x_size, y_size), moveSpeed(moveSpeed) {};
+
+		void drawSlider(SDL_Renderer* renderer) const;
+		void updateSlider(SDL_Renderer* renderer, SideToSlide side_to_move, float delta_time);
+
+		std::pair<float, float> getPos() const { return pos; }
+		void setPos(std::pair<float, float> new_pos) { pos = new_pos; }
+		void setPos(float x, float y) { pos = { x, y }; }
+
+		std::pair<float, float> getTextureSize() const { return texture_size; }
+		void setTextureSize(std::pair<float, float> new_size) { texture_size = new_size; }
+		void setTextureSize(float x_size, float y_size) { texture_size = { x_size, y_size }; }
+
+		std::pair<float, float> getHitboxSize() const { return hitbox_size; }
+		void setHitboxSize(std::pair<float, float> new_size) { hitbox_size = new_size; }
+		void setHitboxSize(float x_size, float y_size) { hitbox_size = { x_size, y_size }; }
+
+		SDL_Rect getHitboxRect() const;
+		float getHitboxWidth() const { return hitbox_size.first; }
+		float getHitboxHeight() const { return hitbox_size.second; }
+
+	private:
+		std::pair<float, float> pos;
+		std::pair<float, float> texture_size;
+		std::pair<float, float> hitbox_size;
+		float moveSpeed;
+};
