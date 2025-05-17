@@ -73,22 +73,21 @@ int main(int argc, char* argv[]) {
             sliderMove = SideToSlide::Slider_Right;
         }
 
-        ball->updateBall(deltaTime);
-        slider->updateSlider(renderer, sliderMove, deltaTime);
-        gameField.Update(deltaTime);
+        if (keystates[SDL_SCANCODE_SPACE]) {
+            if (ball->getSticky()) {
+                ball->launch(0);
+            }
+        }
+        gameField.Update(sliderMove, deltaTime);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
         gameField.Draw(renderer);
-        ball->drawBall(renderer);
-        slider->drawSlider(renderer);
 
         SDL_RenderPresent(renderer);
     }
 
-    delete ball;
-    delete slider;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

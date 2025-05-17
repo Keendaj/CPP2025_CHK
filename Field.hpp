@@ -13,23 +13,19 @@ class Field
 		Field(Ball* ball, Slider* slider, std::pair<int, int> windowSize);
 		~Field();
 		
-		void Update(float deltaTime);
+		void Update(SideToSlide sliderMove, float deltaTime);
 		void Draw(SDL_Renderer* renderer);
 		void InitializeBlocks(int rows, int cols);
 		bool isGameOver() const { return health <= 0; }
 		int getScore() const { return score; }
 
 	private:
-		bool checkBallCollisionWithRect(SDL_Rect *rect);
-		void cleanupDestroyedBlocks();
-		void updateRandomTrajectory(float deltaTime);
 		void handleBallLost();
 
 		Ball *ball;
 		Slider *slider;
 		
 		std::pair<int, int> windowSize;
-		bool isBallSticky = false;
 		bool hasSafetyNet = false;
 		float randomTrajectoryTimer = 0.0f;
 		int score = 0;

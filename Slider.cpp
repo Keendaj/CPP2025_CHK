@@ -5,20 +5,13 @@
 void Slider::drawSlider(SDL_Renderer* renderer) const {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
-	SDL_Rect slider = { 
-		static_cast<int>(pos.first), 
-		static_cast<int>(pos.second), 
-		static_cast<int>(texture_size.first), 
-		static_cast<int>(texture_size.second)
-	};
+	SDL_Rect slider = getRect();
 
 	SDL_RenderFillRect(renderer, &slider);
 
 }
 
-void Slider::updateSlider(SDL_Renderer* renderer, SideToSlide side_to_move, float delta_time) {
-	int width, height;
-	SDL_GetRendererOutputSize(renderer, &width, &height);
+void Slider::updateSlider(SideToSlide side_to_move, float delta_time) {
 	float movement = 0.0f;
 
 	switch (side_to_move) {
@@ -36,19 +29,19 @@ void Slider::updateSlider(SDL_Renderer* renderer, SideToSlide side_to_move, floa
 	if (newPos < 0) {
 		pos.first = 0;
 	} 
-	else if (newPos > width - texture_size.first) {
-		pos.first = width - texture_size.first;
+	else if (newPos > windowWidth - size.first) {
+		pos.first = windowWidth - size.first;
 	} 
 	else {
 		pos.first = newPos;
 	}
 }
 
-SDL_Rect Slider::getHitboxRect() const {
+SDL_Rect Slider::getRect() const {
 	return SDL_Rect{
 		static_cast<int>(pos.first),
 		static_cast<int>(pos.second),
-		static_cast<int>(hitbox_size.first),
-		static_cast<int>(hitbox_size.second)
+		static_cast<int>(size.first),
+		static_cast<int>(size.second)
 	};
 }

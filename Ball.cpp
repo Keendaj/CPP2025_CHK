@@ -57,3 +57,39 @@ void Ball::normalizeVelocity() {
         velocity.second = (velocity.second / speed) * baseSpeed;
     }
 }
+
+bool Ball::checkCollisionWithRect(SDL_Rect* rect)
+{
+    float ballX = pos.first;
+    float ballY = pos.second;
+
+    float closestX;
+    float closestY;
+
+    if (ballX < rect->x) {
+        closestX = rect->x;
+    }
+    else if (ballX > rect->x + rect->w) {
+        closestX = rect->x + rect->w;
+    }
+    else {
+        closestX = ballX;
+    }
+
+    if (ballY < rect->y) {
+        closestY = rect->y;
+    }
+    else if (ballY > rect->y + rect->h) {
+        closestY = rect->y + rect->h;
+    }
+    else {
+        closestY = ballY;
+    }
+
+    int deltaX = ballX - closestX;
+    int deltaY = ballY - closestY;
+    int distanceSquared = deltaX * deltaX + deltaY * deltaY;
+
+    int radiusSquared = radius * radius;
+    return distanceSquared <= radiusSquared;
+}
