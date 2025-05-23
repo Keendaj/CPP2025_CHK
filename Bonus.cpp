@@ -2,7 +2,7 @@
 #include "Field.hpp"
 
 SDL_Color Bonus::standartColor = { 255, 255, 255, 255 };
-float Bonus::fall_speed = 50.0f;
+float Bonus::fallSpeed= 50.0f;
 float Bonus::maxEndtime = 30.0f;
 float Bonus::size = 16;
 int Bonus::padding = 15;
@@ -18,7 +18,7 @@ SDL_Texture* StickyBonus::texture = nullptr;
 SDL_Texture* MovingBlockBonus::texture = nullptr;
 
 
-void DrawTimerCircle(SDL_Renderer* renderer,
+void drawTimerCircle(SDL_Renderer* renderer,
 	int centerX,
 	int centerY,
 	int radius,
@@ -50,7 +50,7 @@ SDL_Rect Bonus::getRect() const {
 	};
 }
 
-void Bonus::Update(float deltaTime) {
+void Bonus::update(float deltaTime) {
 	if (isActive) {
 		if (curEndtime <= 0) {
 			return;
@@ -60,7 +60,7 @@ void Bonus::Update(float deltaTime) {
 		}
 	}
 
-	pos.second += fall_speed * deltaTime;
+	pos.second += fallSpeed * deltaTime;
 	if (pos.second <= 0) {
 		isDropped = false;
 	}
@@ -75,21 +75,21 @@ void SliderSizeBonus::removeBonus(Ball* ball, Slider* slider, Field* field) {
 	slider->setSizeMultiplayer(1.0);
 }
 
-void SliderSizeBonus::LoadTexture(SDL_Renderer* renderer, const std::string& path) {
+void SliderSizeBonus::loadTexture(SDL_Renderer* renderer, const std::string& path) {
 	texture = IMG_LoadTexture(renderer, path.c_str());
 	if (!texture) {
 		SDL_Log("Failed to load SliderSizeBonus texture: %s", IMG_GetError());
 	}
 }
 
-void SliderSizeBonus::DestroyTexture() {
+void SliderSizeBonus::destroyTexture() {
     if (texture) {
         SDL_DestroyTexture(texture);
         texture = nullptr;
     }
 }
 
-void SliderSizeBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
+void SliderSizeBonus::draw(SDL_Renderer* renderer, int curBonusNumber) {
 	SDL_Rect bonusRect = getRect();
 	if (isDropped) {
 		if (texture) {
@@ -121,20 +121,20 @@ void SliderSizeBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 		float progress = curEndtime / maxEndtime;
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		DrawTimerCircle(renderer, centerX, centerY, size + 2, progress);
+		drawTimerCircle(renderer, centerX, centerY, size + 2, progress);
 	}
 }
 
 
 
-void BallSpeedBonus::LoadTexture(SDL_Renderer* renderer, const std::string& path) {
+void BallSpeedBonus::loadTexture(SDL_Renderer* renderer, const std::string& path) {
 	texture = IMG_LoadTexture(renderer, path.c_str());
 	if (!texture) {
 		SDL_Log("Failed to load BallSpeedBonus texture: %s", IMG_GetError());
 	}
 }
 
-void BallSpeedBonus::DestroyTexture() {
+void BallSpeedBonus::destroyTexture() {
 	if (texture) {
 		SDL_DestroyTexture(texture);
 		texture = nullptr;
@@ -151,7 +151,7 @@ void BallSpeedBonus::removeBonus(Ball* ball, Slider* slider, Field* field) {
 }
 
 
-void BallSpeedBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
+void BallSpeedBonus::draw(SDL_Renderer* renderer, int curBonusNumber) {
 	SDL_Rect bonusRect = getRect();
 	if (isDropped) {
 		if (texture) {
@@ -183,26 +183,26 @@ void BallSpeedBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 		float progress = curEndtime / maxEndtime;
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		DrawTimerCircle(renderer, centerX, centerY, size, progress);
+		drawTimerCircle(renderer, centerX, centerY, size, progress);
 	}
 }
 
 
-void StickyBonus::LoadTexture(SDL_Renderer* renderer, const std::string& path) {
+void StickyBonus::loadTexture(SDL_Renderer* renderer, const std::string& path) {
 	texture = IMG_LoadTexture(renderer, path.c_str());
 	if (!texture) {
 		SDL_Log("Failed to load StickyBonus texture: %s", IMG_GetError());
 	}
 }
 
-void StickyBonus::DestroyTexture() {
+void StickyBonus::destroyTexture() {
 	if (texture) {
 		SDL_DestroyTexture(texture);
 		texture = nullptr;
 	}
 }
 
-void StickyBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
+void StickyBonus::draw(SDL_Renderer* renderer, int curBonusNumber) {
 	SDL_Rect bonusRect = getRect();
 
 
@@ -243,14 +243,14 @@ void StickyBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 }
 
 
-void MovingBlockBonus::LoadTexture(SDL_Renderer* renderer, const std::string& path) {
+void MovingBlockBonus::loadTexture(SDL_Renderer* renderer, const std::string& path) {
 	texture = IMG_LoadTexture(renderer, path.c_str());
 	if (!texture) {
 		SDL_Log("Failed to load MovingBlockBonus texture: %s", IMG_GetError());
 	}
 }
 
-void MovingBlockBonus::DestroyTexture() {
+void MovingBlockBonus::destroyTexture() {
 	if (texture) {
 		SDL_DestroyTexture(texture);
 		texture = nullptr;
@@ -258,7 +258,7 @@ void MovingBlockBonus::DestroyTexture() {
 }
 
 
-void MovingBlockBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
+void MovingBlockBonus::draw(SDL_Renderer* renderer, int curBonusNumber) {
 	SDL_Rect bonusRect = getRect();
 	if (isDropped) {
 		if (texture) {

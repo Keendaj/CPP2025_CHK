@@ -6,23 +6,32 @@ int Field::health_size = 32;
 TTF_Font* Field::font = nullptr;
 int Field::font_size = 16;
 
-Field::Field(Ball* ball, Slider* slider, int windowWidth, int windowHeight) 
-    : ball(ball), slider(slider),
+Field::Field(Ball* ball, 
+    Slider* slider, 
+    int windowWidth, 
+    int windowHeight) 
+    : ball(ball),
+    slider(slider),
     windowSize({ windowWidth, windowHeight })
-    { ball->setWindowSize(windowWidth, windowHeight); slider->setWindowSize(windowWidth, windowHeight); }
+    { ball->setWindowSize(windowWidth, windowHeight); 
+    slider->setWindowSize(windowWidth, windowHeight); }
 
-Field::Field(Ball* ball, Slider* slider, std::pair<int, int> windowSize) 
-    : ball(ball), slider(slider),
+Field::Field(Ball* ball, 
+    Slider* slider,
+    std::pair<int, int> windowSize) 
+    : ball(ball),
+    slider(slider),
     windowSize(windowSize)
-    { ball->setWindowSize(windowSize.first, windowSize.second); slider->setWindowSize(windowSize.first, windowSize.second); }
+    { ball->setWindowSize(windowSize.first, windowSize.second);
+    slider->setWindowSize(windowSize.first, windowSize.second); }
 
-void Field::Update(SideToSlide sliderMove, float deltaTime)
+void Field::update(SideToSlide sliderMove, float deltaTime)
 {
     if (isGameOver()) return;
 
     for (auto i : droppedBonuses) {
         if (i && (i->getIsDropped() || i->getIsActive())) {
-            i->Update(deltaTime);
+            i->update(deltaTime);
         }
     }
 
@@ -62,7 +71,7 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
 
     for (auto i : blocks) {
         if (dynamic_cast<MovingBlock*>(i)) {
-            dynamic_cast<MovingBlock*>(i) -> Update(deltaTime);
+            dynamic_cast<MovingBlock*>(i) -> update(deltaTime);
         }
         if (!i || !i->getIsActive()) continue;
         SDL_Rect blockRect = i->getRect();
@@ -150,20 +159,20 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
     CleanDestroyedBonuses();
 }
 
-void Field::Draw(SDL_Renderer* renderer)
+void Field::draw(SDL_Renderer* renderer)
 {
     slider->drawSlider(renderer);
     ball->drawBall(renderer);
 
     for (auto i : blocks) {
         if (i && i->getIsActive()) {
-            i->Draw(renderer);
+            i->draw(renderer);
         }
     }
     int curBonusNumber = 0;
     for (auto i : droppedBonuses) {
         if (i && (i && (i->getIsDropped() || i->getIsActive()))) {
-            i->Draw(renderer, curBonusNumber);
+            i->draw(renderer, curBonusNumber);
             curBonusNumber++;
         }
     }
@@ -195,7 +204,7 @@ void Field::Draw(SDL_Renderer* renderer)
 }
 
 
-void Field::CreateRandomField(int cols, int rows) {
+void Field::createRandomField(int cols, int rows) {
     int centerX = windowSize.first / 2;
 
     float fieldWidth = cols * (BLOCK_WIDTH + BLOCK_PADDING) - BLOCK_PADDING;
@@ -215,7 +224,7 @@ void Field::CreateRandomField(int cols, int rows) {
             int blockType = dist(gen);
             if (blockType >= 9) {
                 Bonus* bonus = nullptr;
-                switch ((i+j)%2)
+                switch ((i+j)%4)
                 {
                     case 0:
                         bonus = new BallSpeedBonus({posX, posY});
@@ -239,10 +248,10 @@ void Field::CreateRandomField(int cols, int rows) {
                 }
                 block = new BonusBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT }, 1, bonus);
             }
-            else if (blockType >= 7) {
+            else if (blockType >= 8) {
                 block = new InvincibleBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT });
             }
-            else if (blockType >= 5) {
+            else if (blockType >= 7) {
                 block = new SpeedUpBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT }, 3, 40);
             }
             else {
@@ -320,7 +329,7 @@ void Field::reloadGame(int cols, int rows) {
     ball->setSpeed(400);
     ball->setVelocity(0, 400);
 
-    CreateRandomField(cols, rows);
+    createRandomField(cols, rows);
 }
 
 void Field::addBlock(BaseBlock* bk) {

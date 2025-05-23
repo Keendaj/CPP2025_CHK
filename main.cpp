@@ -59,11 +59,11 @@ int main(int argc, char* argv[]) {
         10,
         true);
     
-    BallSpeedBonus::LoadTexture(renderer, "SpeedUpBonus.png");
-    SliderSizeBonus::LoadTexture(renderer, "ExtendedSliderBonus.png");
-    StickyBonus::LoadTexture(renderer, "StickyBonus.png");
-    MovingBlockBonus::LoadTexture(renderer, "MovingBlockBonus.png");
-    Bonus::setStandartColor({0, 255, 255, 255});
+    BallSpeedBonus::loadTexture(renderer, "SpeedUpBonus.png");
+    SliderSizeBonus::loadTexture(renderer, "ExtendedSliderBonus.png");
+    StickyBonus::loadTexture(renderer, "StickyBonus.png");
+    MovingBlockBonus::loadTexture(renderer, "MovingBlockBonus.png");
+    Bonus::setStandartColor({255, 255, 0, 255});
     Field::loadFont(renderer, "ArcanoidFont.ttf");
 
     Field gameField(ball.get(), slider.get(), {WINDOW_WIDTH, WINDOW_HEIGHT});
@@ -114,7 +114,16 @@ int main(int argc, char* argv[]) {
         gameField.Draw(renderer);
 
         SDL_RenderPresent(renderer);
+    
+    
+    
     }
+
+    BallSpeedBonus::destroyTexture();
+    SliderSizeBonus::destroyTexture();
+    StickyBonus::destroyTexture();
+    MovingBlockBonus::destroyTexture();
+    Field::destroyFont();
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

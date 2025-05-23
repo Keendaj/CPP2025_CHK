@@ -13,14 +13,16 @@ class Bonus
 {
 	public:
 		Bonus(std::pair<float, float> pos)
-			: pos(pos), isActive(false), isDropped(false) { }
+			: pos(pos), 
+			isActive(false), 
+			isDropped(false) { }
 
 		virtual ~Bonus() = default;
 		virtual void doBonus(Ball* ball, Slider* slider, Field* field) = 0;
 		virtual void removeBonus(Ball* ball, Slider* slider, Field* field) = 0;
 
-		void Update(float deltaTime);
-		virtual void Draw(SDL_Renderer* renderer, int curBonusNumber) = 0;
+		void update(float deltaTime);
+		virtual void draw(SDL_Renderer* renderer, int curBonusNumber) = 0;
 
 		bool getIsActive() const { return isActive; }
 		void setIsActive(bool isA) { isActive = isA; }
@@ -34,14 +36,14 @@ class Bonus
 		SDL_Rect getRect() const;
 
 		static void setStandartColor(SDL_Color color) { standartColor = color; }
-		static void setFallSpeed(float speed) { fall_speed = speed; }
+		static void setFallSpeed(float speed) { fallSpeed = speed; }
 		static void setEndtime(float et) { maxEndtime = et; }
 		static void setSize(float sz) {size = sz; }
 		static void setPadding(int pd) { padding = pd; }
 
 	protected:
 		static SDL_Color standartColor;
-		static float fall_speed;
+		static float fallSpeed;
 		static float maxEndtime;
 		static float size;
 		static int padding;
@@ -62,10 +64,10 @@ class SliderSizeBonus : public Bonus
 		void doBonus(Ball* ball, Slider* slider, Field* field);
 		void removeBonus(Ball* ball, Slider* slider, Field* field);
 
-		void Draw(SDL_Renderer* renderer, int curBonusNumber);
+		void draw(SDL_Renderer* renderer, int curBonusNumber);
 
-		static void LoadTexture(SDL_Renderer* renderer, const std::string& path);
-		static void DestroyTexture();
+		static void loadTexture(SDL_Renderer* renderer, const std::string& path);
+		static void destroyTexture();
 		static float setSizeMultiplier(float mult) { multiplier = mult; }
 
 	protected:
@@ -81,10 +83,10 @@ class BallSpeedBonus : public Bonus
 		void doBonus(Ball* ball, Slider* slider, Field* field);
 		void removeBonus(Ball* ball, Slider* slider, Field* field);
 
-		void Draw(SDL_Renderer* renderer, int curBonusNumber);
+		void draw(SDL_Renderer* renderer, int curBonusNumber);
 
-		static void LoadTexture(SDL_Renderer* renderer, const std::string& path);
-		static void DestroyTexture();
+		static void loadTexture(SDL_Renderer* renderer, const std::string& path);
+		static void destroyTexture();
 		static float setSpeedMultiplier(float mult) { multiplier = mult; }
 		
 	protected:
@@ -100,10 +102,10 @@ class StickyBonus : public Bonus
 		void doBonus(Ball* ball, Slider* slider, Field* field) {};
 		void removeBonus(Ball* ball, Slider* slider, Field* field) {};
 
-		void Draw(SDL_Renderer* renderer, int curBonusNumber);
+		void draw(SDL_Renderer* renderer, int curBonusNumber);
 
-		static void LoadTexture(SDL_Renderer* renderer, const std::string& path);
-		static void DestroyTexture();
+		static void loadTexture(SDL_Renderer* renderer, const std::string& path);
+		static void destroyTexture();
 	protected:
 		static SDL_Texture* texture;
 };
@@ -129,10 +131,10 @@ class MovingBlockBonus : public Bonus
 		void doBonus(Ball* ball, Slider* slider, Field* field);
 		void removeBonus(Ball* ball, Slider* slider, Field* field) {};
 
-		void Draw(SDL_Renderer* renderer, int curBonusNumber);
+		void draw(SDL_Renderer* renderer, int curBonusNumber);
 
-		static void LoadTexture(SDL_Renderer* renderer, const std::string& path);
-		static void DestroyTexture();
+		static void loadTexture(SDL_Renderer* renderer, const std::string& path);
+		static void destroyTexture();
 	protected:
 		int blockSpeed;
 		int leftBorder;

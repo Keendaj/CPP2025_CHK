@@ -18,20 +18,21 @@ class Field
 		Field(Ball *ball, Slider *slider, int windowWidth, int windowHeight);
 		Field(Ball* ball, Slider* slider, std::pair<int, int> windowSize);
 		
-		void Update(SideToSlide sliderMove, float deltaTime);
-		void Draw(SDL_Renderer* renderer);
+		void update(SideToSlide sliderMove, float deltaTime);
+		void draw(SDL_Renderer* renderer);
 		
 		bool isGameOver() const { return health <= 0; }
 		int getScore() const { return score; }
 
 		void reloadGame(int cols, int rows);
-		void CreateRandomField(int cols, int rows);
+		void createRandomField(int cols, int rows);
 		void addBlock(BaseBlock* bk);
 
 		static void loadHealthIcon(SDL_Renderer* renderer, const std::string& path);
 		static void setHealthSize(int hS) { health_size = hS; };
 
 		static void loadFont(SDL_Renderer* renderer, const std::string& path);
+		static void destroyFont();
 		static void setFontSize(int fS) { font_size = fS; };
 
 	private:

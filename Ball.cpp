@@ -3,16 +3,38 @@
 #include <algorithm>
 #define _USE_MATH_DEFINES
 
-Ball::Ball(float x, float y, float x_velocity, float y_velocity, float baseSpeed, float radius, bool isSticky)
-    : pos({ x, y }), velocity({ x_velocity, y_velocity }), baseSpeed(baseSpeed),
-    radius(radius), isSticky(isSticky), speedMultiplaer(1.0)
+Ball::Ball(float x,
+    float y,
+    float xVelocity, 
+    float yVelocity, 
+    float baseSpeed,
+    float radius,
+    bool isSticky,
+    SDL_Color color)
+    : pos({ x, y }), 
+    velocity({ xVelocity, yVelocity }),
+    baseSpeed(baseSpeed),
+    radius(radius), 
+    isSticky(isSticky),
+    speedMultiplaer(1.0),
+    color(color)
 {
     normalizeVelocity();
 }
 
-Ball::Ball(std::pair<float, float> pos, std::pair<float, float> velocity, float baseSpeed, float radius, bool isSticky)
-    : pos(pos), velocity(velocity), baseSpeed(baseSpeed),
-    radius(radius), isSticky(isSticky), speedMultiplaer(1.0)
+Ball::Ball(std::pair<float, float> pos,
+    std::pair<float, float> velocity, 
+    float baseSpeed,
+    float radius, 
+    bool isSticky,
+    SDL_Color color)
+    : pos(pos), 
+    velocity(velocity),
+    baseSpeed(baseSpeed),
+    radius(radius),
+    isSticky(isSticky),
+    speedMultiplaer(1.0),
+    color(color)
 {
     normalizeVelocity();
 }
@@ -22,7 +44,7 @@ void Ball::drawBall(SDL_Renderer* renderer) {
     int centerX = static_cast<int>(pos.first);
     int centerY = static_cast<int>(pos.second);
 
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, color.r, color.b, color.g, color.a);
 
     for (int y = -radius; y <= radius; y++) {
         int dx = static_cast<int>(sqrt(radius * radius - y * y));
@@ -35,11 +57,11 @@ void Ball::drawBall(SDL_Renderer* renderer) {
 }
 
 
-void Ball::updateBall(float delta_time) {
+void Ball::updateBall(float deltaTime) {
     if (isSticky) return;
 
-    pos.first += velocity.first * delta_time;
-    pos.second += velocity.second * delta_time;
+    pos.first += velocity.first * deltaTime;
+    pos.second += velocity.second * deltaTime;
 
     if (pos.first <= radius) {
         pos.first = radius;
@@ -54,13 +76,13 @@ void Ball::updateBall(float delta_time) {
     }
 }
 
-void Ball::setVelocity(float x_velocity, float y_velocity) {
-    velocity = {x_velocity, y_velocity};
+void Ball::setVelocity(float xVelocity, float yVelocity) {
+    velocity = {xVelocity, yVelocity};
     normalizeVelocity();
 }
 
-void Ball::setVelocity(std::pair<float, float> new_velocity) {
-    velocity = new_velocity;
+void Ball::setVelocity(std::pair<float, float> newVelocity) {
+    velocity = newVelocity;
     normalizeVelocity();
 }
 

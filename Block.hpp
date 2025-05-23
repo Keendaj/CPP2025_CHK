@@ -21,7 +21,7 @@ class BaseBlock
 		
 		virtual ~BaseBlock() = default;
 
-		virtual void Draw(SDL_Renderer* renderer) const;
+		virtual void draw(SDL_Renderer* renderer) const;
 		virtual bool getHit(Ball* ball); // true if destroyed
 
 		SDL_Rect getRect() const;
@@ -35,12 +35,17 @@ class BaseBlock
 		void setSize(std::pair<float, float> newSize) { size = newSize; }
 		void setHealth(int newHealth) { health = newHealth; }
 		void setIsActive(bool active) { isActive = active; }
+
+		static void setBlockColors(std::vector<SDL_Color> const& bC);
 	protected:
 		std::pair<float, float> pos;
 		std::pair<float, float> size;
+
 		bool isActive;
 		int health;
 		int maxHealth;
+
+		static std::vector<SDL_Color> &blockColors;
 };
 
 class SpeedUpBlock : public BaseBlock
@@ -53,7 +58,7 @@ class SpeedUpBlock : public BaseBlock
 			: BaseBlock(pos, size, health), speed_up(speed_up) {
 		}
 
-		void Draw(SDL_Renderer* renderer) const;
+		void draw(SDL_Renderer* renderer) const;
 		bool getHit(Ball* ball);
 
 		float getSpeedUp() const { return speed_up; }
@@ -69,7 +74,7 @@ class InvincibleBlock : public BaseBlock
 		InvincibleBlock(std::pair<float, float> pos, std::pair<float, float> size) 
 			: BaseBlock(pos, size, -1) {}
 
-		void Draw(SDL_Renderer* renderer) const;
+		void draw(SDL_Renderer* renderer) const;
 		bool getHit(Ball* ball);
 };
 
@@ -82,7 +87,7 @@ class BonusBlock : public BaseBlock
 			Bonus* bonus)
 			: BaseBlock(pos, size, health), bonus(bonus) { }
 
-		void Draw(SDL_Renderer* renderer) const;
+		void draw(SDL_Renderer* renderer) const;
 		bool getHit(Ball* ball);
 
 		Bonus* getBonus() const { return bonus; }
@@ -106,7 +111,7 @@ class MovingBlock : public BaseBlock {
 			leftBorder(leftBorder),
 			rightBorder(rightBorder) { }
 
-		void Update(float deltaTime);
+		void update(float deltaTime);
 
 		int getDirection() const { return direction; }
 		void changeDirection() { direction *= -1; }

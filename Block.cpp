@@ -9,8 +9,10 @@ std::vector<SDL_Color> Colors = {
 	{0, 255, 255, 255} // жёлтый = бонус
 };
 
-void BaseBlock::Draw(SDL_Renderer* renderer) const {
-	SDL_Color color = Colors[maxHealth];
+std::vector<SDL_Color> &BaseBlock::blockColors = Colors;
+
+void BaseBlock::draw(SDL_Renderer* renderer) const {
+	SDL_Color color = blockColors[maxHealth];
 	SDL_SetRenderDrawColor(renderer,
 		color.r * static_cast<float>(health) / maxHealth,
 		color.g * static_cast<float>(health) / maxHealth,
@@ -42,8 +44,17 @@ SDL_Rect BaseBlock::getRect() const {
 	);
 }
 
-void SpeedUpBlock::Draw(SDL_Renderer* renderer) const {
-	SDL_Color color = Colors[4];
+void BaseBlock::setBlockColors(std::vector<SDL_Color> const& bC) {
+	if (bC.size() >= 6) {
+		blockColors = bC;
+	}
+	else {
+		SDL_Log("Too few colours for the palette");
+	}
+}
+
+void SpeedUpBlock::draw(SDL_Renderer* renderer) const {
+	SDL_Color color = blockColors[4];
 	SDL_SetRenderDrawColor(renderer,
 		color.r * static_cast<float>(health) / maxHealth,
 		color.g * static_cast<float>(health) / maxHealth,
@@ -67,8 +78,8 @@ bool SpeedUpBlock::getHit(Ball* ball) {
 	return false;
 }
 
-void InvincibleBlock::Draw(SDL_Renderer* renderer) const {
-	SDL_Color color = Colors[0];
+void InvincibleBlock::draw(SDL_Renderer* renderer) const {
+	SDL_Color color = blockColors[0];
 	SDL_SetRenderDrawColor(renderer, color.r , color.g, color.b, color.a);
 
 	SDL_Rect block = getRect();
@@ -79,9 +90,9 @@ bool InvincibleBlock::getHit(Ball* ball) {
 	return false;
 }
 
-void BonusBlock::Draw(SDL_Renderer* renderer) const {
+void BonusBlock::draw(SDL_Renderer* renderer) const {
 	if (isActive) {
-		SDL_Color color = Colors[5];
+		SDL_Color color = blockColors[5];
 		SDL_SetRenderDrawColor(renderer,
 			color.r * static_cast<float>(health) / maxHealth,
 			color.g * static_cast<float>(health) / maxHealth,
@@ -101,7 +112,7 @@ bool MovingBlock::getHit(Ball* ball) {
 	return BaseBlock::getHit(ball);
 }
 
-void MovingBlock::Update(float deltaTime) {
+void MovingBlock::update(float deltaTime) {
 	pos.first += direction * speed * deltaTime;
 	if (pos.first >= rightBorder - size.first) {
 		pos.first = rightBorder - size.first;

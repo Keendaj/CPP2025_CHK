@@ -8,15 +8,15 @@ void Slider::drawSlider(SDL_Renderer* renderer) const {
 	SDL_RenderFillRect(renderer, &slider);
 }
 
-void Slider::updateSlider(SideToSlide side_to_move, float delta_time) {
+void Slider::updateSlider(SideToSlide sideToMove, float deltaTime) {
 	float movement = 0.0f;
 
-	switch (side_to_move) {
+	switch (sideToMove) {
 		case SideToSlide::Slider_Left:
-			movement = -moveSpeed * delta_time;
+			movement = -moveSpeed * deltaTime;
 			break;
 		case SideToSlide::Slider_Right:
-			movement = moveSpeed * delta_time;
+			movement = moveSpeed * deltaTime;
 			break;
 		case SideToSlide::Stop:
 			return;
