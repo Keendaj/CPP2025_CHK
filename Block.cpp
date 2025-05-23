@@ -9,7 +9,8 @@ std::vector<SDL_Color> Colors = {
 	{0, 255, 255, 255} // жёлтый = бонус
 };
 
-std::vector<SDL_Color> &BaseBlock::blockColors = Colors;
+std::vector<SDL_Color> BaseBlock::blockColors = Colors;
+
 
 void BaseBlock::draw(SDL_Renderer* renderer) const {
 	SDL_Color color = blockColors[maxHealth];
@@ -44,7 +45,7 @@ SDL_Rect BaseBlock::getRect() const {
 	);
 }
 
-void BaseBlock::setBlockColors(std::vector<SDL_Color> const& bC) {
+void BaseBlock::setBlockColors(std::vector<SDL_Color> bC) {
 	if (bC.size() >= 6) {
 		blockColors = bC;
 	}

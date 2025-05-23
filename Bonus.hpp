@@ -21,7 +21,7 @@ class Bonus
 		virtual void doBonus(Ball* ball, Slider* slider, Field* field) = 0;
 		virtual void removeBonus(Ball* ball, Slider* slider, Field* field) = 0;
 
-		void update(float deltaTime);
+		virtual void update(float deltaTime);
 		virtual void draw(SDL_Renderer* renderer, int curBonusNumber) = 0;
 
 		bool getIsActive() const { return isActive; }
@@ -100,9 +100,10 @@ class StickyBonus : public Bonus
 		StickyBonus(std::pair<float, float> pos) : Bonus(pos) { }
 
 		void doBonus(Ball* ball, Slider* slider, Field* field) {};
-		void removeBonus(Ball* ball, Slider* slider, Field* field) {};
+		void removeBonus(Ball* ball, Slider* slider, Field* field) { isActive = false; };
 
 		void draw(SDL_Renderer* renderer, int curBonusNumber);
+		void update(float deltaTime);
 
 		static void loadTexture(SDL_Renderer* renderer, const std::string& path);
 		static void destroyTexture();
@@ -129,7 +130,7 @@ class MovingBlockBonus : public Bonus
 			blockSize(blockSize){}
 
 		void doBonus(Ball* ball, Slider* slider, Field* field);
-		void removeBonus(Ball* ball, Slider* slider, Field* field) {};
+		void removeBonus(Ball* ball, Slider* slider, Field* field) { isActive = false; };
 
 		void draw(SDL_Renderer* renderer, int curBonusNumber);
 
@@ -143,5 +144,22 @@ class MovingBlockBonus : public Bonus
 		std::pair<int, int> blockPos;
 		std::pair<int, int> blockSize;
 
+		static SDL_Texture* texture;
+};
+
+class OneTimeNetBonus : public Bonus
+{
+	public:
+		OneTimeNetBonus(std::pair<float, float> pos) : Bonus(pos) {}
+
+		void doBonus(Ball* ball, Slider* slider, Field* field);
+		void removeBonus(Ball* ball, Slider* slider, Field* field);
+
+		void draw(SDL_Renderer* renderer, int curBonusNumber);
+		void update(float deltaTime);
+
+		static void loadTexture(SDL_Renderer* renderer, const std::string& path);
+		static void destroyTexture();
+	protected:
 		static SDL_Texture* texture;
 };

@@ -18,8 +18,7 @@ class Slider
 			size(size), 
 			moveSpeed(moveSpeed), 
 			windowWidth(0), 
-			windowHeight(0), 
-			isOneTimeNet(false), 
+			windowHeight(0),
 			sizeMultiplayer(1.0f) { }
 
 		Slider(float xPos, 
@@ -32,7 +31,6 @@ class Slider
 			moveSpeed(moveSpeed),
 			windowWidth(0), 
 			windowHeight(0), 
-			isOneTimeNet(false), 
 			sizeMultiplayer(1.0f) { }
 
 		void drawSlider(SDL_Renderer* renderer) const;
@@ -58,5 +56,4 @@ class Slider
 		float moveSpeed;
 		int windowWidth;
 		int windowHeight;
-		bool isOneTimeNet;
 };

@@ -52,22 +52,25 @@ int main(int argc, char* argv[]) {
     auto lastTime = std::chrono::high_resolution_clock::now();
     std::unique_ptr<Slider> slider = std::make_unique<Slider>(std::make_pair(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT - 50),
         std::make_pair(100, 20), 600.0f);
+    SDL_Color red = { 255, 0, 0, 255 };
     std::unique_ptr<Ball> ball = std::make_unique<Ball>(
         std::make_pair(slider.get()->getPos().first + slider.get()->getSize().first / 2.0, slider.get()->getPos().second - 10),
         std::make_pair(0.0, 400.0),
         400,
         10,
-        true);
+        true,
+        red);
     
-    BallSpeedBonus::loadTexture(renderer, "SpeedUpBonus.png");
-    SliderSizeBonus::loadTexture(renderer, "ExtendedSliderBonus.png");
-    StickyBonus::loadTexture(renderer, "StickyBonus.png");
-    MovingBlockBonus::loadTexture(renderer, "MovingBlockBonus.png");
+    BallSpeedBonus::loadTexture(renderer, "Assets/SpeedUpBonus.png");
+    SliderSizeBonus::loadTexture(renderer, "Assets/ExtendedSliderBonus.png");
+    StickyBonus::loadTexture(renderer, "Assets/StickyBonus.png");
+    MovingBlockBonus::loadTexture(renderer, "Assets/MovingBlockBonus.png");
+    OneTimeNetBonus::loadTexture(renderer, "Assets/OneTimeNetBonus.png");
     Bonus::setStandartColor({255, 255, 0, 255});
-    Field::loadFont(renderer, "ArcanoidFont.ttf");
+    Field::loadFont(renderer, "Assets/ArcanoidFont.ttf");
 
     Field gameField(ball.get(), slider.get(), {WINDOW_WIDTH, WINDOW_HEIGHT});
-    gameField.CreateRandomField(10, 7);
+    gameField.createRandomField(7, 7);
     float restartTime = 2.0f;
     while (isRunning) {
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -100,23 +103,20 @@ int main(int argc, char* argv[]) {
         }
         if (keystates[SDL_SCANCODE_R]) {
             if (restartTime <= 0) {
-                gameField.reloadGame(10, 7);
+                gameField.reloadGame(7, 7);
                 restartTime = 2.0f;
             }
             
         }
 
-        gameField.Update(sliderMove, deltaTime);
+        gameField.update(sliderMove, deltaTime);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        gameField.Draw(renderer);
+        gameField.draw(renderer);
 
         SDL_RenderPresent(renderer);
-    
-    
-    
     }
 
     BallSpeedBonus::destroyTexture();
@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
     StickyBonus::destroyTexture();
     MovingBlockBonus::destroyTexture();
     Field::destroyFont();
-
+    
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

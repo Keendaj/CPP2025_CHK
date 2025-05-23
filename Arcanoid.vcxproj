@@ -82,8 +82,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)*.png" "$(OutDir)"
-xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
+      <Command>xcopy /Y /I "$(ProjectDir)Assets\*" "$(OutDir)\Assets"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -102,8 +101,7 @@ xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)*.png" "$(OutDir)"
-xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
+      <Command>xcopy /Y /I "$(ProjectDir)Assets\*" "$(OutDir)\Assets"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,8 +116,7 @@ xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)*.png" "$(OutDir)"
-xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
+      <Command>xcopy /Y /I "$(ProjectDir)Assets\*" "$(OutDir)\Assets"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,8 +135,7 @@ xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)*.png" "$(OutDir)"
-xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
+      <Command>xcopy /Y /I "$(ProjectDir)Assets\*" "$(OutDir)\Assets"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -158,13 +154,14 @@ xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
     <ClInclude Include="Slider.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="ExtendedSliderBonus.png" />
-    <Image Include="MovingBlockBonus.png" />
-    <Image Include="SpeedUpBonus.png" />
-    <Image Include="StickyBonus.png" />
+    <Font Include="Assets\ArcanoidFont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="ArcanoidFont.ttf" />
+    <Image Include="Assets\ExtendedSliderBonus.png" />
+    <Image Include="Assets\MovingBlockBonus.png" />
+    <Image Include="Assets\OneTimeNetBonus.png" />
+    <Image Include="Assets\SpeedUpBonus.png" />
+    <Image Include="Assets\StickyBonus.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

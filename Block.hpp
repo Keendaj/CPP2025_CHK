@@ -18,8 +18,6 @@ class BaseBlock
 			health(health),
 			maxHealth(health),
 			isActive(true) { }
-		
-		virtual ~BaseBlock() = default;
 
 		virtual void draw(SDL_Renderer* renderer) const;
 		virtual bool getHit(Ball* ball); // true if destroyed
@@ -36,7 +34,7 @@ class BaseBlock
 		void setHealth(int newHealth) { health = newHealth; }
 		void setIsActive(bool active) { isActive = active; }
 
-		static void setBlockColors(std::vector<SDL_Color> const& bC);
+		static void setBlockColors(std::vector<SDL_Color> bC);
 	protected:
 		std::pair<float, float> pos;
 		std::pair<float, float> size;
@@ -45,7 +43,7 @@ class BaseBlock
 		int health;
 		int maxHealth;
 
-		static std::vector<SDL_Color> &blockColors;
+		static std::vector<SDL_Color> blockColors;
 };
 
 class SpeedUpBlock : public BaseBlock

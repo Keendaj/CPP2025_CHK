@@ -16,8 +16,9 @@ class Field
 {
 	public:
 		Field(Ball *ball, Slider *slider, int windowWidth, int windowHeight);
-		Field(Ball* ball, Slider* slider, std::pair<int, int> windowSize);
-		
+		Field(Ball *ball, Slider* slider, std::pair<int, int> windowSize);
+		~Field();
+
 		void update(SideToSlide sliderMove, float deltaTime);
 		void draw(SDL_Renderer* renderer);
 		
@@ -28,12 +29,16 @@ class Field
 		void createRandomField(int cols, int rows);
 		void addBlock(BaseBlock* bk);
 
+		bool getIsOneTimeNet() const { return isOneTimeNet; }
+		void setIsOneTimeNet(bool otn) { isOneTimeNet = otn; }
+
 		static void loadHealthIcon(SDL_Renderer* renderer, const std::string& path);
-		static void setHealthSize(int hS) { health_size = hS; };
+		static void destroyHealtIcon();
+		static void setHealthSize(int hS) { healthSize = hS; };
 
 		static void loadFont(SDL_Renderer* renderer, const std::string& path);
 		static void destroyFont();
-		static void setFontSize(int fS) { font_size = fS; };
+		static void setFontSize(int fS) { fontSize = fS; };
 
 	private:
 		void handleBallLost();
@@ -46,22 +51,19 @@ class Field
 		std::vector<Bonus*> droppedBonuses;
 		std::pair<int, int> windowSize;
 
+		bool isOneTimeNet;
 		int activeBonusCounter;
-		float randomTrajectoryTimer = 0.0f;
 		int score = 0;
 		int health = 3;
 
 		static TTF_Font* font;
-		static int font_size;
+		static int fontSize;
 
-		static SDL_Texture* health_icon;
-		static int health_size;
+		static SDL_Texture* healthIcon;
+		static int healthSize;
 
 		static constexpr float BLOCK_WIDTH = 60.0f;
 		static constexpr float BLOCK_HEIGHT = 20.0f;
-		static constexpr float BLOCK_PADDING = 5.0f;
+		static constexpr float BLOCK_PADDING = 10.0f;
 		static constexpr float BLOCKS_TOP_MARGIN = 100.0f;
-		
-		static constexpr float RANDOM_TRAJECTORY_INTERVAL = 5.0f; 
-		static constexpr float RANDOM_ANGLE_MAX = 30.0f;
 };

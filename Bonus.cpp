@@ -17,6 +17,7 @@ SDL_Texture* StickyBonus::texture = nullptr;
 
 SDL_Texture* MovingBlockBonus::texture = nullptr;
 
+SDL_Texture* OneTimeNetBonus::texture = nullptr;
 
 void drawTimerCircle(SDL_Renderer* renderer,
 	int centerX,
@@ -73,6 +74,7 @@ void SliderSizeBonus::doBonus(Ball* ball, Slider* slider, Field* field) {
 
 void SliderSizeBonus::removeBonus(Ball* ball, Slider* slider, Field* field) {
 	slider->setSizeMultiplayer(1.0);
+	isActive = false;
 }
 
 void SliderSizeBonus::loadTexture(SDL_Renderer* renderer, const std::string& path) {
@@ -148,6 +150,7 @@ void BallSpeedBonus::doBonus(Ball* ball, Slider* slider, Field* field) {
 
 void BallSpeedBonus::removeBonus(Ball* ball, Slider* slider, Field* field) {
 	ball->setSpeedMultiplier(1.0);
+	isActive = false;
 }
 
 
@@ -239,8 +242,20 @@ void StickyBonus::draw(SDL_Renderer* renderer, int curBonusNumber) {
 				standartColor.a);
 			SDL_RenderFillRect(renderer, &iconRect);
 		}
+		float progress = curEndtime / maxEndtime;
+
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		drawTimerCircle(renderer, centerX, centerY, size, progress);
 	}
 }
+
+void StickyBonus::update(float deltaTime) {
+	pos.second += fallSpeed * deltaTime;
+	if (pos.second <= 0) {
+		isDropped = false;
+	}
+}
+
 
 
 void MovingBlockBonus::loadTexture(SDL_Renderer* renderer, const std::string& path) {
@@ -286,4 +301,76 @@ void MovingBlockBonus::doBonus(Ball* ball, Slider* slider, Field* field) {
 		leftBorder,
 		rightBorder);
 	field->addBlock(bk);
+}
+
+void OneTimeNetBonus::doBonus(Ball* ball, Slider* slider, Field* field) {
+	field->setIsOneTimeNet(true);
+}
+
+void OneTimeNetBonus::removeBonus(Ball* ball, Slider* slider, Field* field) {
+	field->setIsOneTimeNet(false);
+	isActive = false;
+}
+
+void OneTimeNetBonus::draw(SDL_Renderer* renderer, int curBonusNumber) {
+	SDL_Rect bonusRect = getRect();
+	if (isDropped) {
+		if (texture) {
+			SDL_RenderCopy(renderer, texture, nullptr, &bonusRect);
+		}
+		else {
+
+			SDL_SetRenderDrawColor(renderer,
+				standartColor.r,
+				standartColor.g,
+				standartColor.b,
+				standartColor.a);
+
+			SDL_RenderFillRect(renderer, &bonusRect);
+		}
+	}
+	else if (isActive) {
+		int centerX = padding + size;
+		int centerY = padding + size + size * 2.6 * curBonusNumber;
+		SDL_Rect iconRect = { padding + size / 2,
+			padding + size / 2 + size * 2.6 * curBonusNumber,
+			size,
+			size };
+		if (texture) {
+			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
+		}
+		else {
+			SDL_SetRenderDrawColor(renderer,
+				standartColor.r,
+				standartColor.g,
+				standartColor.b,
+				standartColor.a);
+			SDL_RenderFillRect(renderer, &iconRect);
+		}
+		float progress = curEndtime / maxEndtime;
+
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		drawTimerCircle(renderer, centerX, centerY, size, progress);
+	}
+}
+
+void OneTimeNetBonus::update(float deltaTime) {
+	pos.second += fallSpeed * deltaTime;
+	if (pos.second <= 0) {
+		isDropped = false;
+	}
+}
+
+void OneTimeNetBonus::loadTexture(SDL_Renderer* renderer, const std::string& path) {
+	texture = IMG_LoadTexture(renderer, path.c_str());
+	if (!texture) {
+		SDL_Log("Failed to load StickyBonus texture: %s", IMG_GetError());
+	}
+}
+
+void OneTimeNetBonus::destroyTexture() {
+	if (texture) {
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
+	}
 }

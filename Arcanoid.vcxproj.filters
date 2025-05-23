@@ -52,22 +52,25 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="ExtendedSliderBonus.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="SpeedUpBonus.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="StickyBonus.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="MovingBlockBonus.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="ArcanoidFont.ttf">
+    <Font Include="Assets\ArcanoidFont.ttf">
       <Filter>Resource Files</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\ExtendedSliderBonus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\MovingBlockBonus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\OneTimeNetBonus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\SpeedUpBonus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\StickyBonus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
