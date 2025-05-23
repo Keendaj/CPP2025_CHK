@@ -4,13 +4,15 @@
 #define _USE_MATH_DEFINES
 
 Ball::Ball(float x, float y, float x_velocity, float y_velocity, float baseSpeed, float radius, bool isSticky)
-    : pos({ x, y }), velocity({ x_velocity, y_velocity }), baseSpeed(baseSpeed), radius(radius), isSticky(isSticky)
+    : pos({ x, y }), velocity({ x_velocity, y_velocity }), baseSpeed(baseSpeed),
+    radius(radius), isSticky(isSticky), speedMultiplaer(1.0)
 {
     normalizeVelocity();
 }
 
 Ball::Ball(std::pair<float, float> pos, std::pair<float, float> velocity, float baseSpeed, float radius, bool isSticky)
-    : pos(pos), velocity(velocity), baseSpeed(baseSpeed), radius(radius), isSticky(isSticky)
+    : pos(pos), velocity(velocity), baseSpeed(baseSpeed),
+    radius(radius), isSticky(isSticky), speedMultiplaer(1.0)
 {
     normalizeVelocity();
 }
@@ -73,8 +75,8 @@ void Ball::launch(float angle) {
 void Ball::normalizeVelocity() {
     float speed = std::sqrt(velocity.first * velocity.first + velocity.second * velocity.second);
     if (speed > 0) {
-        velocity.first = (velocity.first / speed) * baseSpeed;
-        velocity.second = (velocity.second / speed) * baseSpeed;
+        velocity.first = (velocity.first / speed) * getSpeed();
+        velocity.second = (velocity.second / speed) * getSpeed();
     }
 }
 

@@ -1,19 +1,28 @@
 #include "Field.hpp"
 #include <algorithm>
 #include <random>
+#include <iostream>
 #include <cmath>
 
 Field::Field(Ball* ball, Slider* slider, int windowWidth, int windowHeight) 
-    : ball(ball), slider(slider), windowSize({ windowWidth, windowHeight })
+    : ball(ball), slider(slider),
+    windowSize({ windowWidth, windowHeight })
     { ball->setWindowSize(windowWidth, windowHeight); slider->setWindowSize(windowWidth, windowHeight); }
 
 Field::Field(Ball* ball, Slider* slider, std::pair<int, int> windowSize) 
-    : ball(ball), slider(slider), windowSize(windowSize)
+    : ball(ball), slider(slider),
+    windowSize(windowSize)
     { ball->setWindowSize(windowSize.first, windowSize.second); slider->setWindowSize(windowSize.first, windowSize.second); }
 
 void Field::Update(SideToSlide sliderMove, float deltaTime)
 {
     if (isGameOver()) return;
+
+    for (auto i : droppedBonuses) {
+        if (i && (i->getIsDropped() || i->getIsActive())) {
+            i->Update(deltaTime);
+        }
+    }
 
     ball->updateBall(deltaTime);
     auto BallPos = ball->getPos();
@@ -41,11 +50,23 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
         }
     }
 
+
     for (auto i : blocks) {
         if (!i || !i->getIsActive()) continue;
         SDL_Rect blockRect = i->getRect();
         if (ball->checkCollisionWithRect(&blockRect)) {
             if (i->getHit(ball)) {
+                if (dynamic_cast<BonusBlock*>(i)) {
+                    BonusBlock* bonus_block = dynamic_cast<BonusBlock*>(i);
+                    Bonus* bs = bonus_block->getBonus();
+                    if (bs) {
+                        bs->setIsDropped(true);
+                        bs->setIsActive(false);
+                        bs->resetEndtime();
+                        droppedBonuses.push_back(bs);
+                    }
+                    
+                }
                 i->setIsActive(false);
             }
 
@@ -84,10 +105,36 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
                 ball->setPos(blockRight + ball->getSize(), BallPos.second);
             }
         }
-        
+    }
+
+    for (auto i : droppedBonuses) {
+        SDL_Rect bonusRect = i->getRect();
+        SDL_Rect sliderRect = slider->getRect();
+        if (SDL_HasIntersection(&bonusRect, &sliderRect)) {
+            bool alreadyActive = false;
+
+            for (auto j : droppedBonuses) {
+                if (j == i) continue;
+                if (j->getIsActive() && typeid(*j) == typeid(*i)) {
+                    j->resetEndtime();
+                    alreadyActive = true;
+                    break;
+                }
+            }
+
+            if (!alreadyActive) {
+                i->doBonus(ball, slider);
+                i->setIsDropped(false);
+                i->setIsActive(true);
+            }
+            else {
+                i->setIsDropped(false);
+            }
+        }
     }
 
     CleanDestroyedBlocks();
+    CleanDestroyedBonuses();
 }
 
 void Field::Draw(SDL_Renderer* renderer)
@@ -98,6 +145,13 @@ void Field::Draw(SDL_Renderer* renderer)
     for (auto i : blocks) {
         if (i && i->getIsActive()) {
             i->Draw(renderer);
+        }
+    }
+    int curBonusNumber = 0;
+    for (auto i : droppedBonuses) {
+        if (i && (i && (i->getIsDropped() || i->getIsActive()))) {
+            i->Draw(renderer, curBonusNumber);
+            curBonusNumber++;
         }
     }
 }
@@ -112,7 +166,7 @@ void Field::CreateRandomField(int cols, int rows) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, 2);
+    std::uniform_int_distribution<> dist(0, 3);
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
@@ -121,8 +175,23 @@ void Field::CreateRandomField(int cols, int rows) {
 
             BaseBlock* block = nullptr;
             int blockType = dist(gen);
+            if (blockType == 3) {
+                Bonus* bonus = nullptr;
+                switch ((i+j)%2)
+                {
+                    case 0:
+                        bonus = new BallSpeedBonus({posX, posY});
+                        break;
+                    case 1:
+                        bonus = new SliderSizeBonus({ posX, posY });
+                        break;
 
-            if (blockType == 2) {
+                    default:
+                        break;
+                }
+                block = new BonusBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT }, 1, bonus);
+            }
+            else if (blockType == 2) {
                 block = new InvincibleBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT });
             }
             else if (blockType == 1) {
@@ -148,6 +217,21 @@ void Field::CleanDestroyedBlocks() {
         }),
         blocks.end());
 }
+
+void Field::CleanDestroyedBonuses() {
+    for (auto& bonus : droppedBonuses) {
+        if (bonus->getIsActive() && bonus->getEndtime() <= 0.0f) {
+            bonus->removeBonus(ball, slider);
+            bonus->setIsActive(false);
+        }
+    }
+
+    droppedBonuses.erase(std::remove_if(droppedBonuses.begin(), droppedBonuses.end(),
+        [](Bonus* bonus) {
+            return !bonus->getIsDropped() && !bonus->getIsActive();
+        }), droppedBonuses.end());
+}
+
 void Field::handleBallLost() {
     health--;
     if (!isGameOver()) {

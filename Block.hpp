@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include "Bonus.hpp"
 #include "Ball.hpp"
 #include <utility>
 #include <vector>
@@ -64,25 +65,16 @@ class InvincibleBlock : public BaseBlock
 class BonusBlock : public BaseBlock
 {
 	public:
-		BonusBlock(std::pair<float, float> pos, std::pair<float, float> size, int health)
-			: BaseBlock(pos, size, health) {
+		BonusBlock(std::pair<float, float> pos, std::pair<float, float> size, int health, Bonus* bonus)
+			: BaseBlock(pos, size, health), bonus(bonus) {
 		}
 
 		void Draw(SDL_Renderer* renderer) const;
-		virtual bool getHit(Ball* ball) = 0;
-};
+		bool getHit(Ball* ball);
 
-class MovementBonusBlock : public BonusBlock
-{
-	public:
-		MovementBonusBlock(std::pair<float, float> pos, std::pair<float, float> size, int health, float delta_speed)
-			: BonusBlock(pos, size, health), delta_speed(delta_speed) {}
+		Bonus* getBonus() const { return bonus; }
+		void setBonus(Bonus* bs) { bonus = bs; }
 
-		virtual
-		float getDeltaSpeed() const { return delta_speed; }
-
-		void setDeltaSpeed(float ds) { delta_speed = ds; }
-	private:
-		float delta_speed;
-
+	protected:
+		Bonus* bonus;
 };

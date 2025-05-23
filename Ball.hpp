@@ -25,10 +25,13 @@ class Ball
 		void setSize(float radius) { this->radius = radius; };
 
 		void setSpeed(float speed) { baseSpeed = speed; normalizeVelocity(); }
-		float getSpeed() const { return baseSpeed; }
+		float getSpeed() const { return baseSpeed*speedMultiplaer; }
 
 		bool getSticky() const { return isSticky; }
 		void setSticky(bool sticky) { this->isSticky = sticky; }
+
+		float getSpeedMutiplayer() const { return speedMultiplaer; }
+		void setSpeedMultiplier(float mult) { speedMultiplaer = mult; }
 
 		void setWindowSize(int width, int height) { windowWidth = width; windowHeight = height; }
 
@@ -38,6 +41,7 @@ class Ball
 		bool isSticky;
 		float radius;
 		float baseSpeed;
+		float speedMultiplaer;
 		int windowWidth;
 		int windowHeight;
 

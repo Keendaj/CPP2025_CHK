@@ -54,7 +54,11 @@ int main(int argc, char* argv[]) {
         400,
         10,
         true);
-   
+    
+    BallSpeedBonus::LoadTexture(renderer, "SpeedUpBonus.png");
+    SliderSizeBonus::LoadTexture(renderer, "ExtendedSliderBonus.png");
+    Bonus::setStandartColor({0, 255, 255, 255});
+
     Field gameField(ball.get(), slider.get(), {WINDOW_WIDTH, WINDOW_HEIGHT});
     gameField.CreateRandomField(10, 7);
 

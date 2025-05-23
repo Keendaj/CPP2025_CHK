@@ -30,6 +30,9 @@
     <ClCompile Include="Block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Bonus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.hpp">
@@ -44,5 +47,16 @@
     <ClInclude Include="Block.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Bonus.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ExtendedSliderBonus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="SpeedUpBonus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

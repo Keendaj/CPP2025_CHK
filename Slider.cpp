@@ -39,7 +39,7 @@ SDL_Rect Slider::getRect() const {
 	return SDL_Rect{
 		static_cast<int>(pos.first),
 		static_cast<int>(pos.second),
-		static_cast<int>(size.first),
+		static_cast<int>(size.first*sizeMultiplayer),
 		static_cast<int>(size.second)
 	};
 }

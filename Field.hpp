@@ -23,12 +23,15 @@ class Field
 	private:
 		void handleBallLost();
 		void CleanDestroyedBlocks();
+		void CleanDestroyedBonuses();
 		Ball *ball;
 		Slider *slider;
 		
 		std::vector<BaseBlock*> blocks;
+		std::vector<Bonus*> droppedBonuses;
 		std::pair<int, int> windowSize;
-		bool hasSafetyNet = false;
+
+		int activeBonusCounter;
 		float randomTrajectoryTimer = 0.0f;
 		int score = 0;
 		int health = 3;

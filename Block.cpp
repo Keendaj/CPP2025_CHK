@@ -74,13 +74,19 @@ bool InvincibleBlock::getHit(Ball* ball) {
 }
 
 void BonusBlock::Draw(SDL_Renderer* renderer) const {
-	SDL_Color color = Colors[5];
-	SDL_SetRenderDrawColor(renderer,
-		color.r * static_cast<float>(health) / maxHealth,
-		color.g * static_cast<float>(health) / maxHealth,
-		color.b * static_cast<float>(health) / maxHealth,
-		color.a);
+	if (isActive) {
+		SDL_Color color = Colors[5];
+		SDL_SetRenderDrawColor(renderer,
+			color.r * static_cast<float>(health) / maxHealth,
+			color.g * static_cast<float>(health) / maxHealth,
+			color.b * static_cast<float>(health) / maxHealth,
+			color.a);
 
-	SDL_Rect block = getRect();
-	SDL_RenderFillRect(renderer, &block);
+		SDL_Rect block = getRect();
+		SDL_RenderFillRect(renderer, &block);
+	}
+}
+
+bool BonusBlock::getHit(Ball* ball) {
+	return BaseBlock::getHit(ball);
 }
