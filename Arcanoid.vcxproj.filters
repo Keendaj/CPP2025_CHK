@@ -61,6 +61,9 @@
     <Image Include="StickyBonus.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="MovingBlockBonus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="ArcanoidFont.ttf">

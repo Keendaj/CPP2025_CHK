@@ -8,6 +8,7 @@ std::vector<SDL_Color> Colors = {
 	{255, 0, 255, 255}, // розовый = speedup
 	{0, 255, 255, 255} // жёлтый = бонус
 };
+
 void BaseBlock::Draw(SDL_Renderer* renderer) const {
 	SDL_Color color = Colors[maxHealth];
 	SDL_SetRenderDrawColor(renderer,
@@ -94,4 +95,20 @@ void BonusBlock::Draw(SDL_Renderer* renderer) const {
 
 bool BonusBlock::getHit(Ball* ball) {
 	return BaseBlock::getHit(ball);
+}
+
+bool MovingBlock::getHit(Ball* ball) {
+	return BaseBlock::getHit(ball);
+}
+
+void MovingBlock::Update(float deltaTime) {
+	pos.first += speed * deltaTime;
+	if (pos.first >= rightBorder) {
+		pos.first = rightBorder;
+		direction *= -1;
+	}
+	if (pos.first <= leftBorder) {
+		pos.first = leftBorder;
+		direction *= -1;
+	}
 }

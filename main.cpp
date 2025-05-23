@@ -62,6 +62,7 @@ int main(int argc, char* argv[]) {
     BallSpeedBonus::LoadTexture(renderer, "SpeedUpBonus.png");
     SliderSizeBonus::LoadTexture(renderer, "ExtendedSliderBonus.png");
     StickyBonus::LoadTexture(renderer, "StickyBonus.png");
+    MovingBlockBonus::LoadTexture(renderer, "MovingBlockBonus.png");
     Bonus::setStandartColor({0, 255, 255, 255});
     Field::loadFont(renderer, "ArcanoidFont.ttf");
 

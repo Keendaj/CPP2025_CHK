@@ -1,4 +1,5 @@
 #include "Bonus.hpp"
+#include "Field.hpp"
 
 SDL_Color Bonus::standartColor = { 255, 255, 255, 255 };
 float Bonus::fall_speed = 50.0f;
@@ -14,7 +15,7 @@ float BallSpeedBonus::multiplier = 1.1f;
 
 SDL_Texture* StickyBonus::texture = nullptr;
 
-//SDL_Texture* MovingBlockBonus::texture = nullptr;
+SDL_Texture* MovingBlockBonus::texture = nullptr;
 
 
 void DrawTimerCircle(SDL_Renderer* renderer,
@@ -66,11 +67,11 @@ void Bonus::Update(float deltaTime) {
 }
 
 
-void SliderSizeBonus::doBonus(Ball* ball, Slider* slider) {
+void SliderSizeBonus::doBonus(Ball* ball, Slider* slider, Field* field) {
 	slider->setSizeMultiplayer(multiplier);
 }
 
-void SliderSizeBonus::removeBonus(Ball* ball, Slider* slider) {
+void SliderSizeBonus::removeBonus(Ball* ball, Slider* slider, Field* field) {
 	slider->setSizeMultiplayer(1.0);
 }
 
@@ -141,11 +142,11 @@ void BallSpeedBonus::DestroyTexture() {
 }
 
 
-void BallSpeedBonus::doBonus(Ball* ball, Slider* slider) {
+void BallSpeedBonus::doBonus(Ball* ball, Slider* slider, Field* field) {
 	ball->setSpeedMultiplier(multiplier);
 }
 
-void BallSpeedBonus::removeBonus(Ball* ball, Slider* slider) {
+void BallSpeedBonus::removeBonus(Ball* ball, Slider* slider, Field* field) {
 	ball->setSpeedMultiplier(1.0);
 }
 
@@ -241,7 +242,7 @@ void StickyBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 	}
 }
 
-/*
+
 void MovingBlockBonus::LoadTexture(SDL_Renderer* renderer, const std::string& path) {
 	texture = IMG_LoadTexture(renderer, path.c_str());
 	if (!texture) {
@@ -277,7 +278,7 @@ void MovingBlockBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 }
 
 
-void MovingBlockBonus::doBonus(Ball* ball, Slider* slider) {
+void MovingBlockBonus::doBonus(Ball* ball, Slider* slider, Field* field) {
 	MovingBlock* bk = new MovingBlock(blockPos,
 		blockSize,
 		blockHealth,
@@ -285,4 +286,4 @@ void MovingBlockBonus::doBonus(Ball* ball, Slider* slider) {
 		leftBorder,
 		rightBorder);
 	field->addBlock(bk);
-}*/
+}

@@ -159,6 +159,7 @@ xcopy /Y "$(ProjectDir)*.ttf" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ExtendedSliderBonus.png" />
+    <Image Include="MovingBlockBonus.png" />
     <Image Include="SpeedUpBonus.png" />
     <Image Include="StickyBonus.png" />
   </ItemGroup>

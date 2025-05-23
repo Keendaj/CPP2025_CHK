@@ -4,6 +4,7 @@
 #include "Ball.hpp"
 #include "Slider.hpp"
 #include "Block.hpp"
+#include "Bonus.hpp"
 #include <vector>
 #include <utility>
 #include <random>
@@ -25,6 +26,7 @@ class Field
 
 		void reloadGame(int cols, int rows);
 		void CreateRandomField(int cols, int rows);
+		void addBlock(BaseBlock* bk);
 
 		static void loadHealthIcon(SDL_Renderer* renderer, const std::string& path);
 		static void setHealthSize(int hS) { health_size = hS; };

@@ -61,6 +61,9 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
 
 
     for (auto i : blocks) {
+        if (dynamic_cast<MovingBlock*>(i)) {
+            dynamic_cast<MovingBlock*>(i) -> Update(deltaTime);
+        }
         if (!i || !i->getIsActive()) continue;
         SDL_Rect blockRect = i->getRect();
         if (ball->checkCollisionWithRect(&blockRect)) {
@@ -135,7 +138,7 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
             }
 
             if (!alreadyActive) {
-                i->doBonus(ball, slider);
+                i->doBonus(ball, slider, this);
                 i->setIsDropped(false);
                 i->setIsActive(true);
             }
@@ -214,7 +217,7 @@ void Field::CreateRandomField(int cols, int rows) {
             int blockType = dist(gen);
             if (blockType >= 9) {
                 Bonus* bonus = nullptr;
-                switch ((i+j)%3)
+                switch ((i+j)%10)
                 {
                     case 0:
                         bonus = new BallSpeedBonus({posX, posY});
@@ -225,7 +228,22 @@ void Field::CreateRandomField(int cols, int rows) {
                     case 2:
                         bonus = new StickyBonus({ posX, posY });
                         break;
+                    case 3:
+                        bonus = new MovingBlockBonus({ posX, posY },
+                            100,
+                            3,
+                            100,
+                            windowSize.first - 100,
+                            {150, windowSize.second / 2.0 },
+                            {BLOCK_HEIGHT, BLOCK_WIDTH*2});
                     default:
+                        bonus = new MovingBlockBonus({ posX, posY },
+                            100,
+                            3,
+                            100,
+                            windowSize.first - 100,
+                            { 150, windowSize.second / 2.0 },
+                            { BLOCK_WIDTH * 2, BLOCK_HEIGHT });
                         break;
                 }
                 block = new BonusBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT }, 1, bonus);
@@ -268,7 +286,7 @@ void Field::CleanDestroyedBlocks() {
 void Field::CleanDestroyedBonuses() {
     for (auto& bonus : droppedBonuses) {
         if (bonus->getIsActive() && bonus->getEndtime() <= 0.0f) {
-            bonus->removeBonus(ball, slider);
+            bonus->removeBonus(ball, slider, this);
             bonus->setIsActive(false);
         }
     }
@@ -314,6 +332,6 @@ void Field::reloadGame(int cols, int rows) {
     CreateRandomField(cols, rows);
 }
 
-//void Field::addBlock(BaseBlock* bk) {
-//    blocks.push_back(bk);
-//}
+void Field::addBlock(BaseBlock* bk) {
+    blocks.push_back(bk);
+}

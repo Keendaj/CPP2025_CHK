@@ -1,11 +1,11 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include "Bonus.hpp"
-#include "Ball.hpp"
 #include <utility>
 #include <vector>
+#include "Slider.hpp"
+#include "Ball.hpp"
 
-
+class Bonus;
 
 class BaseBlock
 {
@@ -18,6 +18,8 @@ class BaseBlock
 			health(health),
 			maxHealth(health),
 			isActive(true) { }
+		
+		virtual ~BaseBlock() = default;
 
 		virtual void Draw(SDL_Renderer* renderer) const;
 		virtual bool getHit(Ball* ball); // true if destroyed
@@ -90,26 +92,29 @@ class BonusBlock : public BaseBlock
 		Bonus* bonus;
 };
 
-//class MovingBlock : public BaseBlock {
-//	public:
-//		MovingBlock(std::pair<float, float> pos,
-//			std::pair<float, float> size,
-//			int health, 
-//			int speed,
-//			int leftBorder,
-//			int rightBorder)
-//			: BaseBlock(pos, size, health),
-//			speed(speed),
-//			direction(1),
-//			leftBorder(leftBorder),
-//			rightBorder(rightBorder) { }
-//
-//		int getDirection() const { return direction; }
-//		void changeDirection() { direction *= -1; }
-//
-//	protected:
-//		int speed;
-//		int direction;
-//		int leftBorder;
-//		int rightBorder;
-//};
+class MovingBlock : public BaseBlock {
+	public:
+		MovingBlock(std::pair<float, float> pos,
+			std::pair<float, float> size,
+			int health, 
+			int speed,
+			int leftBorder,
+			int rightBorder)
+			: BaseBlock(pos, size, health),
+			speed(speed),
+			direction(1),
+			leftBorder(leftBorder),
+			rightBorder(rightBorder) { }
+
+		void Update(float deltaTime);
+
+		int getDirection() const { return direction; }
+		void changeDirection() { direction *= -1; }
+		bool getHit(Ball* ball);
+
+	protected:
+		int speed;
+		int direction;
+		int leftBorder;
+		int rightBorder;
+};
