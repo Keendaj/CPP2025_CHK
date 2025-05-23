@@ -1,10 +1,9 @@
 #include "Bonus.hpp"
-#include <cmath>
 
 SDL_Color Bonus::standartColor = { 255, 255, 255, 255 };
 float Bonus::fall_speed = 50.0f;
 float Bonus::maxEndtime = 30.0f;
-float Bonus::size = 32;
+float Bonus::size = 16;
 int Bonus::padding = 15;
 
 SDL_Texture* SliderSizeBonus::texture = nullptr;
@@ -15,8 +14,14 @@ float BallSpeedBonus::multiplier = 1.1f;
 
 SDL_Texture* StickyBonus::texture = nullptr;
 
+//SDL_Texture* MovingBlockBonus::texture = nullptr;
 
-void DrawTimerCircle(SDL_Renderer* renderer, int centerX, int centerY, int radius, float progress) {
+
+void DrawTimerCircle(SDL_Renderer* renderer,
+	int centerX,
+	int centerY,
+	int radius,
+	float progress) {
 	const int segments = 64;
 	float angleStep = 2.0f * M_PI / segments;
 	int lastX = centerX;
@@ -91,24 +96,31 @@ void SliderSizeBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 		}
 		else {
 
-			SDL_SetRenderDrawColor(renderer, standartColor.r, standartColor.g, standartColor.b, standartColor.a);
+			SDL_SetRenderDrawColor(renderer,
+				standartColor.r, 
+				standartColor.g,
+				standartColor.b,
+				standartColor.a);
 
 			SDL_RenderFillRect(renderer, &bonusRect);
 		}
 	}
 	else if (isActive) {
-		int centerX = padding + size / 2 ;
-		int centerY = padding + size / 2 + size * 1.3 * curBonusNumber;
+		int centerX = padding + size;
+		int centerY = padding + size + size * 1.3 * curBonusNumber;
 
 		if (texture) {
-			SDL_Rect iconRect = { padding, padding + size * 1.3 * curBonusNumber , size, size };
+			SDL_Rect iconRect = { padding,
+				padding + size * 1.3 * curBonusNumber ,
+				size,
+				size };
 			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
 		}
 
 		float progress = curEndtime / maxEndtime;
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		DrawTimerCircle(renderer, centerX, centerY, size / 2 + 2, progress);
+		DrawTimerCircle(renderer, centerX, centerY, size + 2, progress);
 	}
 }
 
@@ -146,24 +158,31 @@ void BallSpeedBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 		}
 		else {
 
-			SDL_SetRenderDrawColor(renderer, standartColor.r, standartColor.g, standartColor.b, standartColor.a);
+			SDL_SetRenderDrawColor(renderer,
+				standartColor.r,
+				standartColor.g,
+				standartColor.b,
+				standartColor.a);
 
 			SDL_RenderFillRect(renderer, &bonusRect);
 		}
 	}
 	else if (isActive) {
-		int centerX = padding + size / 2;
-		int centerY = padding + size / 2 + size * 1.3 * curBonusNumber;
+		int centerX = padding + size;
+		int centerY = padding + size + size * 1.3 * curBonusNumber;
 
 		if (texture) {
-			SDL_Rect iconRect = { padding, padding + size * 1.3 * curBonusNumber , size, size };
+			SDL_Rect iconRect = { padding,
+				padding + size * 1.3 * curBonusNumber ,
+				size,
+				size };
 			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
 		}
 
 		float progress = curEndtime / maxEndtime;
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		DrawTimerCircle(renderer, centerX, centerY, size / 2, progress);
+		DrawTimerCircle(renderer, centerX, centerY, size, progress);
 	}
 }
 
@@ -192,21 +211,78 @@ void StickyBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 		}
 		else {
 
-			SDL_SetRenderDrawColor(renderer, standartColor.r, standartColor.g, standartColor.b, standartColor.a);
+			SDL_SetRenderDrawColor(renderer,
+				standartColor.r,
+				standartColor.g, 
+				standartColor.b,
+				standartColor.a);
 
 			SDL_RenderFillRect(renderer, &bonusRect);
 		}
 	}
 	else if (isActive) {
-		int centerX = padding + size / 2;
-		int centerY = padding + size / 2 + size * 1.3 * curBonusNumber;
-		SDL_Rect iconRect = { padding, padding + size * 1.3 * curBonusNumber , size, size };
+		int centerX = padding + size;
+		int centerY = padding + size + size * 1.3 * curBonusNumber;
+		SDL_Rect iconRect = { padding,
+			padding + size * 1.3 * curBonusNumber,
+			size,
+			size };
 		if (texture) {
 			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
 		}
 		else {
-			SDL_SetRenderDrawColor(renderer, standartColor.r, standartColor.g, standartColor.b, standartColor.a);
+			SDL_SetRenderDrawColor(renderer,
+				standartColor.r, 
+				standartColor.g, 
+				standartColor.b,
+				standartColor.a);
 			SDL_RenderFillRect(renderer, &iconRect);
 		}
 	}
 }
+
+/*
+void MovingBlockBonus::LoadTexture(SDL_Renderer* renderer, const std::string& path) {
+	texture = IMG_LoadTexture(renderer, path.c_str());
+	if (!texture) {
+		SDL_Log("Failed to load MovingBlockBonus texture: %s", IMG_GetError());
+	}
+}
+
+void MovingBlockBonus::DestroyTexture() {
+	if (texture) {
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
+	}
+}
+
+
+void MovingBlockBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
+	SDL_Rect bonusRect = getRect();
+	if (isDropped) {
+		if (texture) {
+			SDL_RenderCopy(renderer, texture, nullptr, &bonusRect);
+		}
+		else {
+
+			SDL_SetRenderDrawColor(renderer,
+				standartColor.r, 
+				standartColor.g,
+				standartColor.b,
+				standartColor.a);
+
+			SDL_RenderFillRect(renderer, &bonusRect);
+		}
+	}
+}
+
+
+void MovingBlockBonus::doBonus(Ball* ball, Slider* slider) {
+	MovingBlock* bk = new MovingBlock(blockPos,
+		blockSize,
+		blockHealth,
+		blockSpeed,
+		leftBorder,
+		rightBorder);
+	field->addBlock(bk);
+}*/

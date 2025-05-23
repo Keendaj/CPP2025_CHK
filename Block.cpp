@@ -1,4 +1,5 @@
 #include "Block.hpp"
+
 std::vector<SDL_Color> Colors = {
 	{128, 128, 128, 255}, // серый = неу€з
 	{255, 0, 0, 255}, // красный = 1 хп

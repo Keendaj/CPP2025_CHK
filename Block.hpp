@@ -10,8 +10,14 @@
 class BaseBlock
 {
 	public:
-		BaseBlock(std::pair<float, float> pos, std::pair<float, float> size, int health)
-			: pos(pos), size(size), health(health), maxHealth(health), isActive(true) { }
+		BaseBlock(std::pair<float, float> pos,
+			std::pair<float, float> size, 
+			int health)
+			: pos(pos),
+			size(size),
+			health(health),
+			maxHealth(health),
+			isActive(true) { }
 
 		virtual void Draw(SDL_Renderer* renderer) const;
 		virtual bool getHit(Ball* ball); // true if destroyed
@@ -38,7 +44,10 @@ class BaseBlock
 class SpeedUpBlock : public BaseBlock
 {
 	public:
-		SpeedUpBlock(std::pair<float, float> pos, std::pair<float, float> size, int health, float speed_up)
+		SpeedUpBlock(std::pair<float, float> pos,
+			std::pair<float, float> size,
+			int health, 
+			float speed_up)
 			: BaseBlock(pos, size, health), speed_up(speed_up) {
 		}
 
@@ -58,16 +67,18 @@ class InvincibleBlock : public BaseBlock
 		InvincibleBlock(std::pair<float, float> pos, std::pair<float, float> size) 
 			: BaseBlock(pos, size, -1) {}
 
-		virtual void Draw(SDL_Renderer* renderer) const;
-		virtual bool getHit(Ball* ball);
+		void Draw(SDL_Renderer* renderer) const;
+		bool getHit(Ball* ball);
 };
 
 class BonusBlock : public BaseBlock
 {
 	public:
-		BonusBlock(std::pair<float, float> pos, std::pair<float, float> size, int health, Bonus* bonus)
-			: BaseBlock(pos, size, health), bonus(bonus) {
-		}
+		BonusBlock(std::pair<float, float> pos,
+			std::pair<float, float> size, 
+			int health, 
+			Bonus* bonus)
+			: BaseBlock(pos, size, health), bonus(bonus) { }
 
 		void Draw(SDL_Renderer* renderer) const;
 		bool getHit(Ball* ball);
@@ -78,3 +89,27 @@ class BonusBlock : public BaseBlock
 	protected:
 		Bonus* bonus;
 };
+
+//class MovingBlock : public BaseBlock {
+//	public:
+//		MovingBlock(std::pair<float, float> pos,
+//			std::pair<float, float> size,
+//			int health, 
+//			int speed,
+//			int leftBorder,
+//			int rightBorder)
+//			: BaseBlock(pos, size, health),
+//			speed(speed),
+//			direction(1),
+//			leftBorder(leftBorder),
+//			rightBorder(rightBorder) { }
+//
+//		int getDirection() const { return direction; }
+//		void changeDirection() { direction *= -1; }
+//
+//	protected:
+//		int speed;
+//		int direction;
+//		int leftBorder;
+//		int rightBorder;
+//};

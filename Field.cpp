@@ -1,8 +1,4 @@
 #include "Field.hpp"
-#include <algorithm>
-#include <random>
-#include <iostream>
-#include <cmath>
 
 SDL_Texture* Field::health_icon = nullptr;
 int Field::health_size = 32;
@@ -251,8 +247,16 @@ void Field::CreateRandomField(int cols, int rows) {
 
 void Field::CleanDestroyedBlocks() {
     blocks.erase(std::remove_if(blocks.begin(), blocks.end(),
-        [](BaseBlock* block) {
+        [this](BaseBlock* block) {
             if (!block->getIsActive()) {
+                /*if (dynamic_cast<MovingBlock*>(block)) {
+                    for (auto i : droppedBonuses) {
+                        if (dynamic_cast<MovingBlockBonus*>(i)) {
+                            i->setIsActive(false);
+                            break;
+                        }
+                    }
+                }*/
                 delete block;
                 return true;
             }
@@ -309,3 +313,7 @@ void Field::reloadGame(int cols, int rows) {
 
     CreateRandomField(cols, rows);
 }
+
+//void Field::addBlock(BaseBlock* bk) {
+//    blocks.push_back(bk);
+//}

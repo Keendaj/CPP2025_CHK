@@ -6,6 +6,7 @@
 #include "Ball.hpp"
 #include "Slider.hpp"
 
+#include <cmath>
 
 class Bonus
 {
@@ -104,3 +105,39 @@ class StickyBonus : public Bonus
 	protected:
 		static SDL_Texture* texture;
 };
+
+//class MovingBlockBonus : public Bonus
+//{
+//	public:
+//		MovingBlockBonus(std::pair<float, float> pos,
+//			int blockSpeed,
+//			int blockHealth,
+//			int leftBorder,
+//			int rightBorder,
+//			std::pair<int, int> blockPos,
+//			std::pair<int, int> blockSize)
+//			: Bonus(pos),
+//			blockSpeed(blockSpeed),
+//			blockHealth(blockHealth),
+//			leftBorder(leftBorder),
+//			rightBorder(rightBorder),
+//			blockPos(blockPos),
+//			blockSize(blockSize){}
+//
+//		void doBonus(Ball* ball, Slider* slider);
+//		void removeBonus(Ball* ball, Slider* slider) {};
+//
+//		void Draw(SDL_Renderer* renderer, int curBonusNumber);
+//
+//		static void LoadTexture(SDL_Renderer* renderer, const std::string& path);
+//		static void DestroyTexture();
+//	protected:
+//		int blockSpeed;
+//		int leftBorder;
+//		int rightBorder;
+//		int blockHealth;
+//		std::pair<int, int> blockPos;
+//		std::pair<int, int> blockSize;
+//
+//		static SDL_Texture* texture;
+//};

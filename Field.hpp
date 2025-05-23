@@ -7,6 +7,9 @@
 #include <vector>
 #include <utility>
 #include <random>
+#include <algorithm>
+#include <iostream>
+#include <cmath>
 
 class Field
 {
@@ -22,7 +25,7 @@ class Field
 
 		void reloadGame(int cols, int rows);
 		void CreateRandomField(int cols, int rows);
-		
+
 		static void loadHealthIcon(SDL_Renderer* renderer, const std::string& path);
 		static void setHealthSize(int hS) { health_size = hS; };
 
@@ -44,7 +47,7 @@ class Field
 		float randomTrajectoryTimer = 0.0f;
 		int score = 0;
 		int health = 3;
-		
+
 		static TTF_Font* font;
 		static int font_size;
 
