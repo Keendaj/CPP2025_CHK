@@ -12,6 +12,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    if (TTF_Init() == -1) {
+        SDL_Log("TTF_Init failed: %s", TTF_GetError());
+        return 1;
+    }
     const int WINDOW_WIDTH = 800;
     const int WINDOW_HEIGHT = 600;
     const int TARGET_FPS = 60;
@@ -57,15 +61,19 @@ int main(int argc, char* argv[]) {
     
     BallSpeedBonus::LoadTexture(renderer, "SpeedUpBonus.png");
     SliderSizeBonus::LoadTexture(renderer, "ExtendedSliderBonus.png");
+    StickyBonus::LoadTexture(renderer, "StickyBonus.png");
     Bonus::setStandartColor({0, 255, 255, 255});
+    Field::loadFont(renderer, "ArcanoidFont.ttf");
 
     Field gameField(ball.get(), slider.get(), {WINDOW_WIDTH, WINDOW_HEIGHT});
     gameField.CreateRandomField(10, 7);
-
+    float restartTime = 2.0f;
     while (isRunning) {
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
         lastTime = currentTime;
+        restartTime = 0 ? restartTime <= 0 : restartTime - deltaTime;
+       
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -88,6 +96,13 @@ int main(int argc, char* argv[]) {
             if (ball->getSticky()) {
                 ball->launch(0);
             }
+        }
+        if (keystates[SDL_SCANCODE_R]) {
+            if (restartTime <= 0) {
+                gameField.reloadGame(10, 7);
+                restartTime = 2.0f;
+            }
+            
         }
 
         gameField.Update(sliderMove, deltaTime);

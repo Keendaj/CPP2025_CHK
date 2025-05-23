@@ -94,8 +94,8 @@ class StickyBonus : public Bonus
 	public:
 		StickyBonus(std::pair<float, float> pos) : Bonus(pos) { }
 
-		void doBonus(Ball* ball, Slider* slider);
-		void removeBonus(Ball* ball, Slider* slider);
+		void doBonus(Ball* ball, Slider* slider) {};
+		void removeBonus(Ball* ball, Slider* slider) {};
 
 		void Draw(SDL_Renderer* renderer, int curBonusNumber);
 

@@ -8,8 +8,12 @@ std::vector<SDL_Color> Colors = {
 	{0, 255, 255, 255} // жёлтый = бонус
 };
 void BaseBlock::Draw(SDL_Renderer* renderer) const {
-	SDL_Color color = Colors[health];
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	SDL_Color color = Colors[maxHealth];
+	SDL_SetRenderDrawColor(renderer,
+		color.r * static_cast<float>(health) / maxHealth,
+		color.g * static_cast<float>(health) / maxHealth,
+		color.b * static_cast<float>(health) / maxHealth,
+		color.a);
 
 	SDL_Rect block = getRect();
 	SDL_RenderFillRect(renderer, &block);

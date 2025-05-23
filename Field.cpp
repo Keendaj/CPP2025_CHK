@@ -4,6 +4,12 @@
 #include <iostream>
 #include <cmath>
 
+SDL_Texture* Field::health_icon = nullptr;
+int Field::health_size = 32;
+
+TTF_Font* Field::font = nullptr;
+int Field::font_size = 16;
+
 Field::Field(Ball* ball, Slider* slider, int windowWidth, int windowHeight) 
     : ball(ball), slider(slider),
     windowSize({ windowWidth, windowHeight })
@@ -34,6 +40,13 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
     else {
         SDL_Rect sliderRect = slider->getRect();
         if (ball->checkCollisionWithRect(&sliderRect)) {
+            for (auto i : droppedBonuses) {
+                if (dynamic_cast<StickyBonus*>(i) && !i->getIsDropped() && !ball->getSticky()) {
+                    ball->setSticky(true);
+                    i->setIsActive(false);
+                    break;
+                }
+            }
             if (ball->getSticky()) {
                 ball->setPos(slider->getPos().first + slider->getSize().first / 2.0, slider->getPos().second - ball->getSize() / 2);
                 ball->setVelocity(0, 0);
@@ -55,6 +68,9 @@ void Field::Update(SideToSlide sliderMove, float deltaTime)
         if (!i || !i->getIsActive()) continue;
         SDL_Rect blockRect = i->getRect();
         if (ball->checkCollisionWithRect(&blockRect)) {
+            if (!dynamic_cast<InvincibleBlock*>(i)) {
+                score++;
+            }
             if (i->getHit(ball)) {
                 if (dynamic_cast<BonusBlock*>(i)) {
                     BonusBlock* bonus_block = dynamic_cast<BonusBlock*>(i);
@@ -154,6 +170,31 @@ void Field::Draw(SDL_Renderer* renderer)
             curBonusNumber++;
         }
     }
+    for (int i = 0; i < health; ++i) {
+        SDL_Rect dst = { windowSize.first - health_size - 10 - i * (health_size+10), 10, health_size, health_size };
+        if (health_icon) {
+            SDL_RenderCopy(renderer, health_icon, NULL, &dst);
+        }
+        else {
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            SDL_RenderFillRect(renderer, &dst);
+        }
+    }
+    if (font) {
+        SDL_Color color = { 255, 255, 255, 255 };
+
+        std::string score_text = "Score: " + std::to_string(score);
+
+        SDL_Surface* score_surface = TTF_RenderText_Blended(font, score_text.c_str(), color);
+        SDL_Texture* score_texture = SDL_CreateTextureFromSurface(renderer, score_surface);
+
+        SDL_Rect score_rect = { windowSize.first - score_surface->w - 10, 20 + health_size, score_surface->w, score_surface->h };
+        SDL_RenderCopy(renderer, score_texture, NULL, &score_rect);
+
+        SDL_FreeSurface(score_surface);
+        SDL_DestroyTexture(score_texture);
+    }
+
 }
 
 
@@ -166,7 +207,7 @@ void Field::CreateRandomField(int cols, int rows) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, 3);
+    std::uniform_int_distribution<> dist(0, 10);
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
@@ -175,9 +216,9 @@ void Field::CreateRandomField(int cols, int rows) {
 
             BaseBlock* block = nullptr;
             int blockType = dist(gen);
-            if (blockType == 3) {
+            if (blockType >= 9) {
                 Bonus* bonus = nullptr;
-                switch ((i+j)%2)
+                switch ((i+j)%3)
                 {
                     case 0:
                         bonus = new BallSpeedBonus({posX, posY});
@@ -185,16 +226,18 @@ void Field::CreateRandomField(int cols, int rows) {
                     case 1:
                         bonus = new SliderSizeBonus({ posX, posY });
                         break;
-
+                    case 2:
+                        bonus = new StickyBonus({ posX, posY });
+                        break;
                     default:
                         break;
                 }
                 block = new BonusBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT }, 1, bonus);
             }
-            else if (blockType == 2) {
+            else if (blockType >= 7) {
                 block = new InvincibleBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT });
             }
-            else if (blockType == 1) {
+            else if (blockType >= 5) {
                 block = new SpeedUpBlock({ posX, posY }, { BLOCK_WIDTH, BLOCK_HEIGHT }, 3, 40);
             }
             else {
@@ -238,4 +281,31 @@ void Field::handleBallLost() {
         ball->setPos(slider->getPos().first + slider->getSize().first / 2.0, slider->getPos().second - 10);
         ball->setSticky(true);
     }
+}
+
+void Field::loadHealthIcon(SDL_Renderer* renderer, const std::string& path) {
+    health_icon = IMG_LoadTexture(renderer, path.c_str());
+}
+
+void Field::loadFont(SDL_Renderer* renderer, const std::string& path) {
+   font = TTF_OpenFont(path.c_str(), font_size);
+   if (!font) {
+       SDL_Log("Failed to load font: %s", TTF_GetError());
+   }
+}
+
+void Field::reloadGame(int cols, int rows) {
+    health = 3;
+    score = 0;
+    droppedBonuses.clear();
+    blocks.clear();
+
+    slider->setPos(std::make_pair(windowSize.first / 2.0f - 50, windowSize.second - 50));
+
+    ball->setSticky(true);
+    ball->setPos(std::make_pair(slider->getPos().first + slider->getSize().first / 2.0, slider->getPos().second - 10));
+    ball->setSpeed(400);
+    ball->setVelocity(0, 400);
+
+    CreateRandomField(cols, rows);
 }

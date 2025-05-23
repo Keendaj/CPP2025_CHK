@@ -98,10 +98,10 @@ void SliderSizeBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 	}
 	else if (isActive) {
 		int centerX = padding + size / 2 ;
-		int centerY = padding + size / 2 + size * curBonusNumber;
+		int centerY = padding + size / 2 + size * 1.3 * curBonusNumber;
 
 		if (texture) {
-			SDL_Rect iconRect = { padding, padding + size * curBonusNumber , size, size };
+			SDL_Rect iconRect = { padding, padding + size * 1.3 * curBonusNumber , size, size };
 			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
 		}
 
@@ -153,10 +153,10 @@ void BallSpeedBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 	}
 	else if (isActive) {
 		int centerX = padding + size / 2;
-		int centerY = padding + size / 2 + size * curBonusNumber;
+		int centerY = padding + size / 2 + size * 1.3 * curBonusNumber;
 
 		if (texture) {
-			SDL_Rect iconRect = { padding, padding + size * curBonusNumber , size, size };
+			SDL_Rect iconRect = { padding, padding + size * 1.3 * curBonusNumber , size, size };
 			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
 		}
 
@@ -185,6 +185,7 @@ void StickyBonus::DestroyTexture() {
 void StickyBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 	SDL_Rect bonusRect = getRect();
 
+
 	if (isDropped) {
 		if (texture) {
 			SDL_RenderCopy(renderer, texture, nullptr, &bonusRect);
@@ -198,16 +199,14 @@ void StickyBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 	}
 	else if (isActive) {
 		int centerX = padding + size / 2;
-		int centerY = padding + size / 2 + size * curBonusNumber;
-
+		int centerY = padding + size / 2 + size * 1.3 * curBonusNumber;
+		SDL_Rect iconRect = { padding, padding + size * 1.3 * curBonusNumber , size, size };
 		if (texture) {
-			SDL_Rect iconRect = { padding, padding + size * curBonusNumber , size, size };
 			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
 		}
-
-		float progress = curEndtime / maxEndtime;
-
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		DrawTimerCircle(renderer, centerX, centerY, size / 2, progress);
+		else {
+			SDL_SetRenderDrawColor(renderer, standartColor.r, standartColor.g, standartColor.b, standartColor.a);
+			SDL_RenderFillRect(renderer, &iconRect);
+		}
 	}
 }
