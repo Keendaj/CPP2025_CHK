@@ -108,11 +108,11 @@ void SliderSizeBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 	}
 	else if (isActive) {
 		int centerX = padding + size;
-		int centerY = padding + size + size * 1.3 * curBonusNumber;
+		int centerY = padding + size + size * 2.6 * curBonusNumber;
 
 		if (texture) {
-			SDL_Rect iconRect = { padding,
-				padding + size * 1.3 * curBonusNumber ,
+			SDL_Rect iconRect = { padding + size / 2,
+				padding + size / 2 + size * 2.6 * curBonusNumber ,
 				size,
 				size };
 			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
@@ -170,11 +170,11 @@ void BallSpeedBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 	}
 	else if (isActive) {
 		int centerX = padding + size;
-		int centerY = padding + size + size * 1.3 * curBonusNumber;
+		int centerY = padding + size + size * 2.6 * curBonusNumber;
 
 		if (texture) {
-			SDL_Rect iconRect = { padding,
-				padding + size * 1.3 * curBonusNumber ,
+			SDL_Rect iconRect = { padding + size / 2,
+				padding + size / 2 + size * 2.6 * curBonusNumber ,
 				size,
 				size };
 			SDL_RenderCopy(renderer, texture, nullptr, &iconRect);
@@ -223,9 +223,9 @@ void StickyBonus::Draw(SDL_Renderer* renderer, int curBonusNumber) {
 	}
 	else if (isActive) {
 		int centerX = padding + size;
-		int centerY = padding + size + size * 1.3 * curBonusNumber;
-		SDL_Rect iconRect = { padding,
-			padding + size * 1.3 * curBonusNumber,
+		int centerY = padding + size + size * 2.6 * curBonusNumber;
+		SDL_Rect iconRect = { padding + size / 2,
+			padding + size / 2 + size * 2.6 * curBonusNumber,
 			size,
 			size };
 		if (texture) {

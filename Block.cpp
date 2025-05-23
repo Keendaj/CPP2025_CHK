@@ -102,9 +102,9 @@ bool MovingBlock::getHit(Ball* ball) {
 }
 
 void MovingBlock::Update(float deltaTime) {
-	pos.first += speed * deltaTime;
-	if (pos.first >= rightBorder) {
-		pos.first = rightBorder;
+	pos.first += direction * speed * deltaTime;
+	if (pos.first >= rightBorder - size.first) {
+		pos.first = rightBorder - size.first;
 		direction *= -1;
 	}
 	if (pos.first <= leftBorder) {
