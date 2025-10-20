@@ -157,6 +157,7 @@
     <Font Include="Assets\ArcanoidFont.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Assets\chk.png" />
     <Image Include="Assets\ExtendedSliderBonus.png" />
     <Image Include="Assets\MovingBlockBonus.png" />
     <Image Include="Assets\OneTimeNetBonus.png" />

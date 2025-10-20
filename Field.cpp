@@ -252,7 +252,7 @@ void Field::createRandomField(int cols, int rows) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(0, 10);
-    std::uniform_int_distribution<> bonusDist(0, 4);
+    std::uniform_int_distribution<> bonusDist(3, 3);
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
@@ -333,7 +333,11 @@ void Field::CleanDestroyedBonuses() {
 
     droppedBonuses.erase(std::remove_if(droppedBonuses.begin(), droppedBonuses.end(),
         [](Bonus* bonus) {
-            return !bonus->getIsDropped() && !bonus->getIsActive();
+            if (!bonus->getIsDropped() && !bonus->getIsActive()) {
+                delete bonus;
+                return true;
+            }
+            return false;
         }), droppedBonuses.end());
 }
 

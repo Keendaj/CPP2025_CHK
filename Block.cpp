@@ -1,4 +1,8 @@
 #include "Block.hpp"
+#include <SDL2/SDL_image.h>
+
+SDL_Texture* MovingBlock::texture = nullptr;
+SDL_Texture* BonusBlock::texture = nullptr;
 
 std::vector<SDL_Color> Colors = {
 	{128, 128, 128, 255}, // ρεπϋι = νεσÿη
@@ -92,7 +96,13 @@ bool InvincibleBlock::getHit(Ball* ball) {
 }
 
 void BonusBlock::draw(SDL_Renderer* renderer) const {
-	if (isActive) {
+	if (!isActive) return;
+
+	if (texture) {
+		SDL_Rect block = getRect();
+		SDL_RenderCopy(renderer, texture, nullptr, &block);
+	}
+	else {
 		SDL_Color color = blockColors[5];
 		SDL_SetRenderDrawColor(renderer,
 			color.r * static_cast<float>(health) / maxHealth,
@@ -113,6 +123,18 @@ bool MovingBlock::getHit(Ball* ball) {
 	return BaseBlock::getHit(ball);
 }
 
+void MovingBlock::draw(SDL_Renderer* renderer) const {
+	if (!isActive) return;
+
+	if (texture) {
+		SDL_Rect block = getRect();
+		SDL_RenderCopy(renderer, texture, nullptr, &block);
+	}
+	else {
+		BaseBlock::draw(renderer);
+	}
+}
+
 void MovingBlock::update(float deltaTime) {
 	pos.first += direction * speed * deltaTime;
 	if (pos.first >= rightBorder - size.first) {
@@ -122,5 +144,38 @@ void MovingBlock::update(float deltaTime) {
 	if (pos.first <= leftBorder) {
 		pos.first = leftBorder;
 		direction *= -1;
+	}
+}
+
+void BonusBlock::loadTexture(SDL_Renderer* renderer, const std::string& path) {
+	destroyTexture();
+
+	texture = IMG_LoadTexture(renderer, path.c_str());
+	if (!texture) {
+		SDL_Log("Failed to load StickyBonus texture: %s", IMG_GetError());
+	}
+}
+
+void BonusBlock::destroyTexture() {
+	if (texture) {
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
+	}
+}
+
+void MovingBlock::loadTexture(SDL_Renderer* renderer, const std::string& path) {
+	destroyTexture();
+
+	texture = IMG_LoadTexture(renderer, path.c_str());
+	if (!texture) {
+		SDL_Log("Failed to load StickyBonus texture: %s", IMG_GetError());
+	}
+}
+
+
+void MovingBlock::destroyTexture() {
+	if (texture) {
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
 	}
 }

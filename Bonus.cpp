@@ -8,10 +8,10 @@ float Bonus::size = 16;
 int Bonus::padding = 15;
 
 SDL_Texture* SliderSizeBonus::texture = nullptr;
-float SliderSizeBonus::multiplier = 1.1f;
+float SliderSizeBonus::multiplier = 1.3f;
 
 SDL_Texture* BallSpeedBonus::texture = nullptr;
-float BallSpeedBonus::multiplier = 1.1f;
+float BallSpeedBonus::multiplier = 1.3f;
 
 SDL_Texture* StickyBonus::texture = nullptr;
 

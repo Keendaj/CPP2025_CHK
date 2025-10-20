@@ -72,5 +72,8 @@
     <Image Include="Assets\StickyBonus.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Assets\chk.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

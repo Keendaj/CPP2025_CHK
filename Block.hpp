@@ -90,8 +90,12 @@ class BonusBlock : public BaseBlock
 
 		Bonus* getBonus() const { return bonus; }
 		void setBonus(Bonus* bs) { bonus = bs; }
+		
+		static void loadTexture(SDL_Renderer* renderer, const std::string& path);
+		static void destroyTexture();
 
 	protected:
+		static SDL_Texture* texture;
 		Bonus* bonus;
 };
 
@@ -110,12 +114,19 @@ class MovingBlock : public BaseBlock {
 			rightBorder(rightBorder) { }
 
 		void update(float deltaTime);
+		void draw(SDL_Renderer* renderer) const;
 
 		int getDirection() const { return direction; }
 		void changeDirection() { direction *= -1; }
 		bool getHit(Ball* ball);
 
+		static void loadTexture(SDL_Renderer* renderer, const std::string& path);
+		static void destroyTexture();
+
 	protected:
+
+		static SDL_Texture* texture;
+
 		int speed;
 		int direction;
 		int leftBorder;

@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     bool isRunning = true;
     auto lastTime = std::chrono::high_resolution_clock::now();
     std::unique_ptr<Slider> slider = std::make_unique<Slider>(std::make_pair(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT - 50),
-        std::make_pair(100, 20), 600.0f);
+        std::make_pair(100, 20), 600.0f); 
     SDL_Color red = { 255, 0, 0, 255 };
     std::unique_ptr<Ball> ball = std::make_unique<Ball>(
         std::make_pair(slider.get()->getPos().first + slider.get()->getSize().first / 2.0, slider.get()->getPos().second - 10),
@@ -66,11 +66,13 @@ int main(int argc, char* argv[]) {
     StickyBonus::loadTexture(renderer, "Assets/StickyBonus.png");
     MovingBlockBonus::loadTexture(renderer, "Assets/MovingBlockBonus.png");
     OneTimeNetBonus::loadTexture(renderer, "Assets/OneTimeNetBonus.png");
+    BonusBlock::loadTexture(renderer, "Assets/chk.png");
+    MovingBlock::loadTexture(renderer, "Assets/chk.png");
     Bonus::setStandartColor({255, 255, 0, 255});
     Field::loadFont(renderer, "Assets/ArcanoidFont.ttf");
 
     Field gameField(ball.get(), slider.get(), {WINDOW_WIDTH, WINDOW_HEIGHT});
-    gameField.createRandomField(7, 7);
+    gameField.createRandomField(9, 7);
     float restartTime = 2.0f;
     while (isRunning) {
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -123,8 +125,9 @@ int main(int argc, char* argv[]) {
     SliderSizeBonus::destroyTexture();
     StickyBonus::destroyTexture();
     MovingBlockBonus::destroyTexture();
+    OneTimeNetBonus::destroyTexture();
     Field::destroyFont();
-    
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
