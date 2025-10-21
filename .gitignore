@@ -1,2 +1,6 @@
 build/
 *.exe
+*.bat
+*.o
+*.gch
+Plugins/*
