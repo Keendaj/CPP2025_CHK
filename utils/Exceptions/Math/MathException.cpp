@@ -1,8 +1,7 @@
 #include "MathException.hpp"
 #include <sstream>
 
-const char* calculator::MathException::what() const {
-    str return_msg = "";
+const char* calculator::MathException::what() const noexcept{
     std::ostringstream oss;
     oss << "[CALCULATOR] " << getTypename() << ": " << message;
             

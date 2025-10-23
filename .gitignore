@@ -3,6 +3,4 @@ build/
 *.bat
 *.o
 *.gch
-Plugins/*
 dllGenerator/*
-include/*

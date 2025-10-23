@@ -4,8 +4,8 @@
 namespace calculator {
     class ZeroDivisionException : public MathException {
         public:
-            ZeroDivisionException(crStr msg = "Division by Zero", crStr operation = "division", number num) 
-            : MathException(msg, operation,{num, 0.0}) {}
+            ZeroDivisionException(crStr msg = "Division by Zero", crStr operation = "division", vecNumber num = {0}) 
+            : MathException(msg, operation, num) {}
 
             str getTypename() const override { return "ZeroDivisionException"; }
     };
