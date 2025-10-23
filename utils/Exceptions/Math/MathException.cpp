@@ -1,4 +1,4 @@
-#include "MathExceptions.hpp"
+#include "MathException.hpp"
 #include <sstream>
 
 const char* calculator::MathException::what() const {
