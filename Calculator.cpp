@@ -7,6 +7,8 @@
 
 #define TESTING
 
+using namespace calculator;
+
 bool Calculator::isFunction(crStr token) {
     if (token.empty()) {
         return false;
@@ -46,7 +48,7 @@ int Calculator::getPrecedence(crStr token) {
     return 0;
 }
 
-Calculator::number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
+number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
     size_t start = pos;
     bool hasDot = false;
 
@@ -75,7 +77,7 @@ Calculator::number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& l
     }
 }
 
-Calculator::str Calculator::readOperation(crStr strToCalc, size_t pos, size_t& len) {
+str Calculator::readOperation(crStr strToCalc, size_t pos, size_t& len) {
     size_t start = pos;
 
     if (isalpha(strToCalc[pos])) {
@@ -200,7 +202,7 @@ void Calculator::parse(crStr strToCalc) {
 }
 
 
-Calculator::number Calculator::calculate(crStr strToCalc){
+number Calculator::calculate(crStr strToCalc){
     parse(strToCalc);
     std::istringstream iss(parsedString);
     std::stack<number> stack;
