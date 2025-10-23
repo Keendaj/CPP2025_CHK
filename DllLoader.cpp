@@ -1,4 +1,5 @@
 #include "DllLoader.hpp"
+#define TESTING
 
 using namespace calculator;
 namespace fs = std::filesystem;
@@ -26,8 +27,14 @@ HMODULE DllLoader::findAndLoadPlugin(const PluginData& data) {
     auto dllFiles = findDllFiles();
     
     for (const auto& dllFile : dllFiles) {
+        #ifdef TESTING
+            std::cout << "Обработка: " << dllFile << std::endl;
+        #endif
         HMODULE candidate = checkPlugin(dllFile, data);
         if (candidate) {
+            #ifdef TESTING
+                std::cout << "Принят: " << dllFile << std::endl;
+            #endif
             currentPluginName = dllFile;
             return candidate;
         }
