@@ -10,6 +10,5 @@ namespace calculator {
     {
         str name;
         OperationType type;
-        size_t operationPriority;
     };
 }
