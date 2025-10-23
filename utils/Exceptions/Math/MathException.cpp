@@ -4,7 +4,7 @@
 const char* calculator::MathException::what() const {
     str return_msg = "";
     std::ostringstream oss;
-    oss << "[CALCULATOR] " << get_type_name() << ": " << message;
+    oss << "[CALCULATOR] " << getTypename() << ": " << message;
             
     if (!operation.empty()) {
         oss << " [Operation: " << operation << "]";

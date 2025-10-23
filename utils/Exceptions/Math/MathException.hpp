@@ -1,6 +1,5 @@
 #pragma once
 #include "../CalculatorException.hpp"
-#include "../../types.hpp"
 
 namespace calculator {
     class MathException : public CalculatorException{
@@ -13,7 +12,7 @@ namespace calculator {
 
             const char* what() const noexcept override;
 
-            crStr get_type_name() const override { return "MathException"; }
+            crStr getTypename() const override { return "MathException"; }
             crStr get_operation() const { return operation; }
             const vecNumber& get_operands() const { return operands; }
     };
