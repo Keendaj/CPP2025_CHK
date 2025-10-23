@@ -7,6 +7,6 @@ namespace calculator {
             FunctionNotFoundException(crStr pluginName, crStr functionName, crStr dllPath)
             : DLLException("Function not found in plugin", pluginName, functionName, dllPath) {}
 
-            crStr getTypename() const { return "FunctionNotFoundException"; }
+            str getTypename() const { return "FunctionNotFoundException"; }
     };
 }

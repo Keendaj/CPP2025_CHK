@@ -11,7 +11,7 @@ namespace calculator{
             CalculatorException(crStr msg) : message(message) {}
             virtual ~CalculatorException() = default;
 
-            virtual crStr getTypename() const { return "CalculatorException"; }
-            crStr get_message() const { return message; }
+            virtual str getTypename() const { return "CalculatorException"; }
+            str get_message() const { return message; }
     };
 }

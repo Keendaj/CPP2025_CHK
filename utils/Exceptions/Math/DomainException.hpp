@@ -7,6 +7,6 @@ namespace calculator {
             DomainException(crStr msg, crStr operation, const vecNumber& operands)
             : MathException(msg, operation, operands) {}
 
-            crStr getTypename() const override { return "DomainException"; }
+            str getTypename() const override { return "DomainException"; }
     };
 }

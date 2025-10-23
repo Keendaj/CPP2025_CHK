@@ -6,6 +6,6 @@ namespace calculator {
         public:
         LoadExecption(crStr dllPath) : DLLException("Couldn't load dll", "", "", dllPath){}
 
-        crStr getTypename() const { return "LoadException"; }
+        str getTypename() const { return "LoadException"; }
     };
 }

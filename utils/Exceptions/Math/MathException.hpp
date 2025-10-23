@@ -12,8 +12,8 @@ namespace calculator {
 
             const char* what() const noexcept override;
 
-            crStr getTypename() const override { return "MathException"; }
-            crStr get_operation() const { return operation; }
-            const vecNumber& get_operands() const { return operands; }
+            str getTypename() const override { return "MathException"; }
+            str get_operation() const { return operation; }
+            vecNumber get_operands() const { return operands; }
     };
 }

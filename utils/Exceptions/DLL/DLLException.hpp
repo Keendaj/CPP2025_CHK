@@ -14,9 +14,9 @@ namespace calculator {
 
             const char* what() const noexcept override;
 
-            crStr getTypename() const override { return "PluginException"; }
-            crStr getPluginName() const { return pluginName; }
-            crStr getFunctionName() const { return functionName; }
-            crStr getDllPath() const { return dllPath; }
+            str getTypename() const override { return "PluginException"; }
+            str getPluginName() const { return pluginName; }
+            str getFunctionName() const { return functionName; }
+            str getDllPath() const { return dllPath; }
     };
 }
