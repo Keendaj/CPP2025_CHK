@@ -24,6 +24,7 @@ bool Calculator::isFunction(crStr token) {
     }
     try
     {
+        loader.unload();
         loader.load({token, OperationType::FUNCTION});
     }
     catch(const LoadExecption& e)
@@ -40,7 +41,8 @@ bool Calculator::isOperator(crStr token) {
     }
     try
     {
-        loader.load({token, OperationType::FUNCTION});
+        loader.unload();
+        loader.load({token, OperationType::OPERATION});
         return true;
     }
     catch(const LoadExecption& e)
@@ -63,6 +65,7 @@ int Calculator::getPrecedence(crStr token) {
     
     try
     {
+        loader.unload();
         loader.load({token, OperationType::FUNCTION});
         return loader.getPrecedence();
     }
@@ -73,6 +76,10 @@ int Calculator::getPrecedence(crStr token) {
 }
 
 number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
+    if (pos >= strToCalc.size()) {
+        throw std::runtime_error("Позиция выходит за границы строки");
+    }
+
     size_t start = pos;
     bool hasDot = false;
 
@@ -89,8 +96,9 @@ number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
     }
 
     len = pos - start;
-    if (len == 0)
-        throw std::runtime_error("Ошибка: ожидалось число, но не найдено");
+    if (len == 0 || start + len > strToCalc.size()) {
+        throw std::runtime_error("Некорректная длина числа");
+    }
 
     str token = strToCalc.substr(start, len);
 
@@ -102,6 +110,10 @@ number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
 }
 
 str Calculator::readOperation(crStr strToCalc, size_t pos, size_t& len) {
+    if (pos >= strToCalc.size()) {
+        throw std::runtime_error("Позиция выходит за границы строки");
+    }
+
     size_t start = pos;
 
     if (isalpha(strToCalc[pos])) {
@@ -114,9 +126,9 @@ str Calculator::readOperation(crStr strToCalc, size_t pos, size_t& len) {
     }
 
     len = pos - start;
-    if (len == 0)
-        throw std::runtime_error("Ошибка: оператор не найден");
-
+    if (len == 0 || start + len > strToCalc.size()) {
+        throw std::runtime_error("Некорректная длина операции");
+    }
     str op = strToCalc.substr(start, len);
 
     return op;
