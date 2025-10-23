@@ -148,3 +148,42 @@ number DllLoader::execute(const PluginData& data, std::stack<number>& st) {
     
     return st.top();
 }
+
+bool DllLoader::isOperation() const {
+    if (!currentPlugin) {
+        throw DLLException("No plugin is currently loaded");
+    }
+    
+    auto isOperationFunc = (bool(*)())GetProcAddress(currentPlugin, "isOperation");
+    if (!isOperationFunc) {
+        throw FunctionNotFoundException(currentPluginName, "isOperation", getCurrentPluginPath());
+    }
+    
+    return isOperationFunc();
+}
+
+bool DllLoader::isFunction() const {
+    if (!currentPlugin) {
+        throw DLLException("No plugin is currently loaded");
+    }
+    
+    auto isFunctionFunc = (bool(*)())GetProcAddress(currentPlugin, "isFunction");
+    if (!isFunctionFunc) {
+        throw FunctionNotFoundException(currentPluginName, "isFunction", getCurrentPluginPath());
+    }
+    
+    return isFunctionFunc();
+}
+
+size_t DllLoader::getPrecedence() const {
+    if (!currentPlugin) {
+        throw DLLException("No plugin is currently loaded");
+    }
+    
+    auto getPrecedenceFunc = (size_t(*)())GetProcAddress(currentPlugin, "getPrecedence");
+    if (!getPrecedenceFunc) {
+        return 0;
+    }
+    
+    return getPrecedenceFunc();
+}

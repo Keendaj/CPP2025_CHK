@@ -22,6 +22,14 @@ bool Calculator::isFunction(crStr token) {
     if (token.size() == 1 && (token == "+" || token == "-" || token == "*" || token == "/")){
         return false;
     }
+    try
+    {
+        loader.load({token, OperationType::FUNCTION});
+    }
+    catch(const LoadExecption& e)
+    {
+        return false;
+    }
 
     return true;
 }
@@ -30,8 +38,15 @@ bool Calculator::isOperator(crStr token) {
     if(token == "+" || token == "-" || token == "*" || token == "/"){
         return true;
     }
-    //Тут будет подгрузка dll для операций, когда разберусь со структурой dll
-    return false;
+    try
+    {
+        loader.load({token, OperationType::FUNCTION});
+        return true;
+    }
+    catch(const LoadExecption& e)
+    {
+        return false;
+    }
 }
 
 int Calculator::getPrecedence(crStr token) {
@@ -46,7 +61,14 @@ int Calculator::getPrecedence(crStr token) {
     if (it != precedenceMap.end())
         return it->second;
     
-    //Тут будет подгрузка dll для приоритета, когда разберусь со структурой dll
+    try
+    {
+        loader.load({token, OperationType::FUNCTION});
+        return loader.getPrecedence();
+    }
+    catch(const std::exception& e)
+    {
+    }
     return 0;
 }
 
@@ -243,11 +265,12 @@ number Calculator::calculate(crStr strToCalc){
                 res = a / b;
             }
             else {
-                // Заглушка для операции из DLL
                 #ifdef TESTING
                     std::cout << "Операция: "<< token << std::endl;
                 #endif
-                res = a + b;
+                stack.push(b);
+                stack.push(a);
+                loader.execute({token, OperationType::OPERATION}, stack);
                 
             }
 
@@ -256,18 +279,13 @@ number Calculator::calculate(crStr strToCalc){
         else if (isFunction(token)) {
             if (stack.empty())
                 throw std::runtime_error("Ошибка: недостаточно операндов для функции");
-
-            number x = stack.top(); stack.pop();
-            number res = 0;
+            
+            loader.execute({token, OperationType::OPERATION}, stack);
 
             
             #ifdef TESTING
                 std::cout << "Функция: "<< token << std::endl;
             #endif
-            // Заглушка для функций
-            res = x;
-
-            stack.push(res);
         }
         else {
             throw std::runtime_error("Неизвестный токен: " + token);

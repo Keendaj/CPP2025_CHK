@@ -3,7 +3,7 @@
 
 using namespace calculator;
 
-const char* DLLException::what() const {
+const char* DLLException::what() const noexcept{
     std::ostringstream oss;
     oss << "[CALCULATOR] " << getTypename() << ": " << message;
                 

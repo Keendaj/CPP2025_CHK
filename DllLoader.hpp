@@ -29,12 +29,15 @@ namespace calculator{
 
             bool load(const PluginData& data);
             number execute(const PluginData& data, std::stack<number>& st);
+            bool isOperation() const;
+            bool isFunction() const;
+            size_t getPrecedence() const;
 
             bool isPluginLoaded() const { return currentPlugin != nullptr; }
             str getPluginsPath() const { return pluginsPath; }
             str getCurrentPluginName() const { return currentPluginName; }
             str getCurrentPluginPath() const;
-
+            
             void setPluginsPath(crStr path);
             void unload();
     };

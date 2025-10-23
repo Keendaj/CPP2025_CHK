@@ -23,7 +23,7 @@ namespace calculator {
             bool isFunction(crStr token);
             int getPrecedence(crStr token);
 
-            str getPluginsPath() const { loader.getPluginsPath(); }
+            str getPluginsPath() const { return loader.getPluginsPath(); }
             void setPluginsPath(crStr path) { loader.setPluginsPath(path); }
     };
 }
