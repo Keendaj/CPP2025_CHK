@@ -14,18 +14,18 @@ void Test::run() {
     for (size_t i = 0; i < tests.size(); ++i) {
         try {
             tests[i]();
-            output << "Test " << i + 1 << ": \033[32mPASS\033[0m" << std::endl << std::flush;
+            output << "Test " << i + 1 << ": \033[32mPASS\033[0m" << std::endl;
             ++passCount;
         } catch (const std::exception& e) {
-            output << "Test " << i + 1 << ": \033[31mFAIL\033[0m - " << e.what() << ""<< std::endl << std::flush;
+            output << "Test " << i + 1 << ": \033[31mFAIL\033[0m - " << e.what() << ""<< std::endl;
             ++failCount;
         } catch (...) {
-            output << "Test " << i + 1 << ": \033[31mFAIL\033[0m - unokwn error" << std::endl << std::flush;
+            output << "Test " << i + 1 << ": \033[31mFAIL\033[0m - unokwn error" << std::endl;
             ++failCount;
         }
     }
 
-    output << "\nSummary: " << passCount << " passed, " << failCount << " failed." << std::endl << std::flush;
+    output << "\nSummary: " << passCount << " passed, " << failCount << " failed." << std::endl;
 }
 
 void Test::addParserTests(){

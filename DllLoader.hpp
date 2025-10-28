@@ -21,7 +21,6 @@ namespace calculator{
 
             std::vector<str> findDllFiles() const;
         public:
-            DllLoader() = default;
             explicit DllLoader(crStr path);
             ~DllLoader();
 

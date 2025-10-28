@@ -4,8 +4,14 @@ project(CalculatorRPN VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB_RECURSE SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+set(SOURCES
+    main.cpp
+    Calculator.cpp
+    DllLoader.cpp
+    Tests/Test.cpp
+    utils/Exceptions/CalculatorException.cpp
+    utils/Exceptions/Math/MathException.cpp
+    utils/Exceptions/DLL/DLLException.cpp
 )
 
 include_directories(
@@ -14,12 +20,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/Tests
 )
 
-list(FILTER SOURCES EXCLUDE REGEX "build/*")
-list(FILTER SOURCES EXCLUDE REGEX ".*/dllGenerator/.*")
-
-add_executable(calculator
-    ${SOURCES}
-)
+add_executable(calculator ${SOURCES})
 
 add_custom_command(TARGET calculator POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

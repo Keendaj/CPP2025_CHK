@@ -8,6 +8,8 @@
 #include <windows.h>
 #include "utils/Exceptions/Math/ZeroDivisionException.hpp"
 
+#define TESTING
+
 using namespace calculator;
 
 bool Calculator::isFunction(crStr token) {
@@ -24,6 +26,9 @@ bool Calculator::isFunction(crStr token) {
 
     try
     {
+        #ifdef TESTING
+            std::cout << "Проверка на функцию: " << token << std::endl;
+        #endif
         return loader.isFunction(token);
     }
     catch(const DLLException& e)
@@ -244,13 +249,17 @@ void Calculator::parse(crStr strToCalc) {
 
 number Calculator::calculate(crStr strToCalc){
     parse(strToCalc);
+
     std::istringstream iss(parsedString);
     std::stack<number> stack;
     std::string token;
     #ifdef TESTING
-        std::cout << "Подсчёт для строки: "<< strToCalc << std::endl;
+        std::cout << "Подсчёт для строки: "<< parsedString << std::endl;
     #endif
     while (iss >> token) {
+        #ifdef TESTING
+            std::cout << "Токен: "<< token << std::endl;
+        #endif
         if (isdigit(token[0]) || 
             (token.size() > 1 && token[0] == '-' && isdigit(token[1]))) {
             stack.push(std::stod(token));
@@ -296,7 +305,7 @@ number Calculator::calculate(crStr strToCalc){
         else if (isFunction(token)) {
             if (stack.empty())
                 throw std::runtime_error("Error: too few operands for unary function");
-            
+                
             loader.execute(token, stack);
 
             

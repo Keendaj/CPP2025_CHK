@@ -14,14 +14,18 @@ void startCalculations() {
         return;
     }
 
-    std::cout << "Калькулятор RPN" << std::endl;
-    std::cout << "Вводите числа и операции (+, -, *, / ...)" << std::endl;
-    std::cout << "Введите 'help' для справки, 'exit' для выхода" << std::endl;
+    std::cout << "Калькулятор RPN" << std::endl ;
+    std::cout << "Вводите числа и операции (+, -, *, / ...)" << std::endl ;
+    std::cout << "Введите 'help' для справки, 'exit' для выхода" << std::endl ;
 
     std::string input;
     while (true) {
-        std::cout << "> ";
-        std::getline(std::cin, input);
+        std::cout << "> "; 
+        
+        if (!std::getline(std::cin, input)) {
+            std::cerr << "Ошибка ввода" << std::endl;
+            break;
+        }
 
         if (input == "exit") break;
         if (input == "help") {
@@ -54,10 +58,12 @@ void runTests() {
 
 int main(int argc, char* argv[]) {
     SetConsoleOutputCP(CP_UTF8);
-
+    
     if (argc > 1) {
         std::string arg = argv[1];
+        
         if (arg == "--test" || arg == "-t") {
+            std::cout << "Запуск тестов..." << std::endl;
             runTests();
             return 0;
         } else if (arg == "--help" || arg == "-h") {
@@ -72,6 +78,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    std::cout << "Запуск интерактивного режима..." << std::endl;
     startCalculations();
     return 0;
 }

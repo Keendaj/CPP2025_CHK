@@ -11,6 +11,6 @@ extern "C" {
     EXPORT void getCalculation(std::stack<calculator::number>& operands);
     EXPORT bool isOperation() noexcept;
     EXPORT bool isFunction() noexcept;
-    EXPORT calculator::str getName() noexcept;
+    EXPORT const char* getName() noexcept;
     EXPORT size_t getPrecedence() noexcept;
 }
