@@ -25,7 +25,7 @@ namespace calculator{
             ~DllLoader();
 
             bool loadPlugins();
-            number execute(crStr name, std::stack<number>& st);
+            number execute(str name, std::stack<number>& st);
             bool isOperation(crStr name) const;
             bool isFunction(crStr name) const;
             size_t getPrecedence(crStr name) const;

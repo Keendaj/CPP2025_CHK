@@ -2,8 +2,6 @@
 #include <algorithm>
 #include "utils/Exceptions/Math/MathException.hpp"
 
-#define TESTING
-
 using namespace calculator;
 namespace fs = std::filesystem;
 
@@ -131,7 +129,7 @@ bool DllLoader::loadPlugins() {
     return loadedAny;
 }
 
-number DllLoader::execute(crStr name, std::stack<number>& st) {
+number DllLoader::execute(str name, std::stack<number>& st) {
     auto it = std::find_if(data.begin(), data.end(), [&](const PluginData& d) {
         return d.name == name;
     });
@@ -142,14 +140,14 @@ number DllLoader::execute(crStr name, std::stack<number>& st) {
     auto calculateFunc = (void(*)(std::stack<number>&))GetProcAddress(it->handle, "getCalculation");
     if (!calculateFunc) {
         throw FunctionNotFoundException(it->name, "getCalculation", it->path);
-    }
+    } 
     try{
         #ifdef TESTING
             std::cout << "Токен: "<< name << std::endl;
         #endif
         calculateFunc(st);
         #ifdef TESTING
-            std::cout << "Токен: "<< name << std::endl;
+            std::cout << "Токен: "<< st.top() << std::endl;
         #endif
     }
     catch(const std::exception& e){

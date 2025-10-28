@@ -4,9 +4,9 @@
 namespace calculator {
     class DLLException : public CalculatorException {
         protected:
-            std::string pluginName;
-            std::string functionName;
-            std::string dllPath;
+            str pluginName;
+            str functionName;
+            str dllPath;
 
         public:
             DLLException(crStr message, crStr pluginName = "", crStr functionName = "", crStr dllPath = "")

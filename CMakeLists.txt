@@ -5,13 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SOURCES
-    main.cpp
-    Calculator.cpp
-    DllLoader.cpp
-    Tests/Test.cpp
-    utils/Exceptions/CalculatorException.cpp
-    utils/Exceptions/Math/MathException.cpp
-    utils/Exceptions/DLL/DLLException.cpp
+    ${CMAKE_SOURCE_DIR}/main.cpp
+    ${CMAKE_SOURCE_DIR}/Calculator.cpp
+    ${CMAKE_SOURCE_DIR}/DllLoader.cpp
+    ${CMAKE_SOURCE_DIR}/Tests/Test.cpp
+    ${CMAKE_SOURCE_DIR}/utils/Exceptions/CalculatorException.cpp
+    ${CMAKE_SOURCE_DIR}/utils/Exceptions/Math/MathException.cpp
+    ${CMAKE_SOURCE_DIR}/utils/Exceptions/DLL/DLLException.cpp
 )
 
 include_directories(

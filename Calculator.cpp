@@ -8,8 +8,6 @@
 #include <windows.h>
 #include "utils/Exceptions/Math/ZeroDivisionException.hpp"
 
-#define TESTING
-
 using namespace calculator;
 
 bool Calculator::isFunction(crStr token) {
@@ -306,11 +304,11 @@ number Calculator::calculate(crStr strToCalc){
             if (stack.empty())
                 throw std::runtime_error("Error: too few operands for unary function");
                 
-            loader.execute(token, stack);
+            number t = loader.execute(token, stack);
 
             
             #ifdef TESTING
-                std::cout << "Функция: "<< token << std::endl;
+                std::cout << "Функция: "<< token << " Число: " << t << std::endl;
             #endif
         }
         else {
