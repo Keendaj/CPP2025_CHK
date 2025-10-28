@@ -3,8 +3,9 @@
 #include <iostream>
 #include <windows.h>
 
-int main(){
-    SetConsoleOutputCP(CP_UTF8);
+
+void startCalculations() {
+    
     
     calculator::Calculator calc("Plugins");
 
@@ -31,6 +32,23 @@ int main(){
             std::cerr << e.what();
         }
     }
+}
+
+
+void runTests() {
+    Test t(std::cout);
+
+    t.addDllLoaderTests();
+    t.addParserTests();
+    t.addCalculationTests();
+
+    t.run();
+}
+
+int main(){
+    SetConsoleOutputCP(CP_UTF8);
+    
+    runTests();
 
     return 0;
 }

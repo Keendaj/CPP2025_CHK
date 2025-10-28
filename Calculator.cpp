@@ -30,7 +30,7 @@ bool Calculator::isFunction(crStr token) {
     }
     catch(const DLLException& e)
     {
-        throw e;
+        return false;
     }
 }
 
@@ -40,11 +40,14 @@ bool Calculator::isOperator(crStr token) {
     }
     try
     {
+        #ifdef TESTING
+            std::cout << "Проверка на операцию: " << token << std::endl;
+        #endif
         return loader.isOperation(token);
     }
     catch(const DLLException& e)
     {
-        throw e;
+        return false;
     }
 }
 
@@ -66,7 +69,7 @@ int Calculator::getPrecedence(crStr token) {
     }
     catch(const DLLException& e)
     {
-        throw e;
+        return 255;
     }
 }
 
@@ -191,11 +194,6 @@ void Calculator::parse(crStr strToCalc) {
             }
             pos += length;
 
-            if (isFunction(op)) {
-                opStack.push(op);
-                continue;
-            }
-
             if (expectUnary && (op == "+" || op == "-")) {
                 if (op == "-") {
                     output << "0 ";
@@ -215,6 +213,14 @@ void Calculator::parse(crStr strToCalc) {
                 expectUnary = false;
                 continue;
             }
+
+            if (isFunction(op)) {
+                opStack.push(op);
+                continue;
+            }
+
+
+            
 
             throw std::runtime_error("Unknown operation: " + op);
         }
@@ -275,9 +281,10 @@ number Calculator::calculate(crStr strToCalc){
                 #ifdef TESTING
                     std::cout << "Операция: "<< token << std::endl;
                 #endif
-                stack.push(b);
                 stack.push(a);
+                stack.push(b);
                 loader.execute(token, stack);
+                continue;
                 
             }
 

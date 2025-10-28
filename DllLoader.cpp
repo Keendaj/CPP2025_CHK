@@ -1,10 +1,12 @@
 #include "DllLoader.hpp"
+#include <algorithm>
+
 #define TESTING
 
 using namespace calculator;
 namespace fs = std::filesystem;
 
-DllLoader::DllLoader(crStr path) : pluginsPath(path) {}
+DllLoader::DllLoader(crStr path) : pluginsPath(path) { loadPlugins(); }
 
 DllLoader::~DllLoader() { unloadPlugins(); }
 
@@ -84,48 +86,6 @@ bool DllLoader::loadPlugins() {
     bool loadedAny = false;
 
     for (const auto& dllFile : dllFiles) {
-        #ifdef TESTING
-        std::cout << "Loading DLLs: " << dllFile << std::endl;
-        #endif
-        HMODULE module = LoadLibraryA(dllFile.c_str());
-        if (!module) {
-            std::cerr << "Can'l load DLLs: " << dllFile << std::endl;
-            continue;
-        }
-
-        auto getNameFunc = (str(*)())GetProcAddress(module, "getName");
-        auto isOperationFunc = (bool(*)())GetProcAddress(module, "isOperation");
-        auto isFunctionFunc = (bool(*)())GetProcAddress(module, "isFunction");
-        auto getPrecedenceFunc = (size_t(*)())GetProcAddress(module, "getPrecedence");
-
-        if (!getNameFunc || !isOperationFunc || !isFunctionFunc) {
-            std::cerr << "Incorrect plugin: " << dllFile << std::endl;
-            FreeLibrary(module);
-            continue;
-        }
-
-        PluginData pd;
-        pd.name = getNameFunc();
-        pd.type = isFunctionFunc() ? OperationType::FUNCTION : OperationType::OPERATION;
-        pd.precedence = getPrecedenceFunc ? getPrecedenceFunc() : 0;
-        pd.handle = module;
-        pd.path = dllFile;
-
-        data.push_back(pd);
-
-        
-    }
-
-    return true;
-}
-
-bool DllLoader::loadPlugins() {
-    unloadPlugins();
-
-    auto dllFiles = findDllFiles();
-    bool loadedAny = false;
-
-    for (const auto& dllFile : dllFiles) {
         if(loadAndCheckPlugin(dllFile)){
             loadedAny = true;
         }
@@ -158,7 +118,7 @@ number DllLoader::execute(crStr name, std::stack<number>& st) {
     return st.top();
 }
 
-bool DllLoader::isOperation(crStr name) const noexcept {
+bool DllLoader::isOperation(crStr name) const {
     auto it = std::find_if(data.begin(), data.end(),
         [&](const PluginData& pd) { return pd.name == name; });
 
@@ -169,7 +129,7 @@ bool DllLoader::isOperation(crStr name) const noexcept {
     return it->type == OperationType::OPERATION;
 }
 
-bool DllLoader::isFunction(crStr name) const noexcept {
+bool DllLoader::isFunction(crStr name) const {
     auto it = std::find_if(data.begin(), data.end(),
         [&](const PluginData& pd) { return pd.name == name; });
 
@@ -180,7 +140,7 @@ bool DllLoader::isFunction(crStr name) const noexcept {
     return it->type == OperationType::FUNCTION;
 }
 
-size_t DllLoader::getPrecedence(crStr name) const noexcept {
+size_t DllLoader::getPrecedence(crStr name) const {
     auto it = std::find_if(data.begin(), data.end(),
         [&](const PluginData& pd) { return pd.name == name; });
 

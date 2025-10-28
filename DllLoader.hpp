@@ -27,12 +27,12 @@ namespace calculator{
 
             bool loadPlugins();
             number execute(crStr name, std::stack<number>& st);
-            bool isOperation(crStr name) const noexcept ;
-            bool isFunction(crStr name) const noexcept ;
-            size_t getPrecedence(crStr name) const noexcept ;
+            bool isOperation(crStr name) const;
+            bool isFunction(crStr name) const;
+            size_t getPrecedence(crStr name) const;
             str getPluginsPath() const noexcept { return pluginsPath; }
             
-            void setPluginsPath(crStr path);
+            void setPluginsPath(crStr path) { pluginsPath = path; }
             void unloadPlugins();
     };
 }

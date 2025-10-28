@@ -33,6 +33,7 @@ void Test::addParserTests(){
     //Тест на обычную работу
     addCustomTest([]() 
     {
+        std::cout << "\033[33m[INFO]\033[0m Тест на обычную работу (парсинг 2 + 3 * 4)\n";
         calculator::Calculator calc;
         calc.calculate("2 + 3 * 4");
         std::string expected = "2 3 4 * + ";
@@ -45,6 +46,7 @@ void Test::addParserTests(){
     //Тест на функции
     addCustomTest([]()
     {
+        std::cout << "\033[33m[INFO]\033[0m Тест на функции (парсинг sqrt(16) + cos(0))\n";
         calculator::Calculator calc;
         calc.calculate("sqrt(16) + cos(0)");
         std::string expected = "16 sqrt 0 cos + ";
@@ -57,6 +59,7 @@ void Test::addParserTests(){
     //Тест на унарный минус
     addCustomTest([]()
     {
+        std::cout << "\033[33m[INFO]\033[0m Тест на унарный минус (-3 + 5)\n";
         calculator::Calculator calc;
         calc.calculate("-3 + 5");
         std::string expected = "0 3 - 5 + ";
@@ -68,6 +71,7 @@ void Test::addParserTests(){
 
     //Тест на скобки
     addCustomTest([](){
+        std::cout << "\033[33m[INFO]\033[0m Тест на скобки (2 * (3 + (4 - 1)))\n";
         calculator::Calculator calc;
         calc.calculate("2 * (3 + (4 - 1))");
         std::string expected = "2 3 4 1 - + * ";
@@ -77,11 +81,12 @@ void Test::addParserTests(){
         }
     });
 
-    //Тест на операцию из dll пока что ему плохо, т.к. парсер считает, что все не стандартные операции - унарные функции и приоритету плохо
+    //Тест на операцию из dll
     addCustomTest([](){
+        std::cout << "\033[33m[INFO]\033[0m Тест на нестандартную операцию из DLL (2 ^ 3 + 4)\n";
         calculator::Calculator calc;
-        calc.calculate("2 @ 3 + 4");
-        std::string expected = "2 3 @ 4 + "; 
+        calc.calculate("2 ^ 3 + 4");
+        std::string expected = "2 3 ^ 4 + "; 
         if (calc.getParsedString() != expected){
 	        throw std::runtime_error("Неправильная RPN: ожидалось \"" + expected +
                                  "\", получили \"" + calc.getParsedString() + "\"");
@@ -94,6 +99,7 @@ void Test::addCalculationTests()
 {
     //Тест на обычную работу
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на обычную работу (2 + 3 * 4)\n";
         calculator::Calculator calc;
         int result = calc.calculate("2 + 3 * 4");
         if (result != 14)
@@ -102,14 +108,16 @@ void Test::addCalculationTests()
 
     //Тест на функции
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на функции (sqrt(16) + cos(0))\n";
         calculator::Calculator calc;
-        int result = calc.calculate("sqrt(16) + cos(0)"); //Пока что заглушки, потому это 16 + 0
-        if (result != 16)
-            throw std::runtime_error("Calculation failed: expected 16, got " + std::to_string(result));
+        int result = calc.calculate("sqrt(16) + cos(0)");
+        if (result != 5)
+            throw std::runtime_error("Calculation failed: expected 5, got " + std::to_string(result));
     });
 
     //Тест на унарный минус
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на унарный минус (-3 + 5)\n";
         calculator::Calculator calc;
         int result = calc.calculate("-3 + 5");
         if (result != 2)
@@ -118,222 +126,194 @@ void Test::addCalculationTests()
 
     //Тест на скобки
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на скобки (2 * (3 + 4))\n";
         calculator::Calculator calc;
         int result = calc.calculate("2 * (3 + 4)");
         if (result != 14)
             throw std::runtime_error("Calculation failed: expected 14, got " + std::to_string(result));
     });
 
-    //Тест на операцию из dll пока что ему плохо, т.к. парсер считает, что все не стандартные операции - унарные функции и приоритету плохо
+    //Тест на операцию из dll
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на нестандартную операцию из DLL (2 ^ 3 + 4)\n";
         calculator::Calculator calc;
-        int result = calc.calculate("2 @ 3 + 4");
-        if (result != 9)
-            throw std::runtime_error("Calculation failed: expected 9, got " + std::to_string(result));
+        int result = calc.calculate("2 ^ 3 + 4");
+        if (result != 12)
+            throw std::runtime_error("Calculation failed: expected 12, got " + std::to_string(result));
     });
 }
 
 void Test::addDllLoaderTests() {
 
-    // Тест на загрузку плагина функции
+    // Тест на загрузку всех плагинов
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на загрузку всех плагинов\n";
         calculator::DllLoader loader("plugins");
-        calculator::PluginData data;
-        data.name = "sin";
-        data.type = calculator::OperationType::FUNCTION;
-        
-        bool loaded = loader.load(data);
+        bool loaded = loader.loadPlugins();
+
         if (!loaded) {
-            throw std::runtime_error("Failed to load plugin 'add'");
-        }
-        
-        if (!loader.isPluginLoaded()) {
-            throw std::runtime_error("Plugin should be loaded but isPluginLoaded() returns false");
-        }
-    });
-
-    // Тест на загрузку плагина операции
-    addCustomTest([]() {
-        calculator::DllLoader loader("plugins");
-        calculator::PluginData data;
-        data.name = "^";
-        data.type = calculator::OperationType::OPERATION;
-        
-        bool loaded = loader.load(data);
-        if (!loaded) {
-            throw std::runtime_error("Failed to load plugin '^'");
-        }
-        
-        if (!loader.isPluginLoaded()) {
-            throw std::runtime_error("Plugin should be loaded but isPluginLoaded() returns false");
-        }
-    });
-
-    // Тест на выполнение функции через плагин
-    addCustomTest([]() {
-        calculator::DllLoader loader("plugins");
-        calculator::PluginData data;
-        data.name = "cos";
-        data.type = calculator::OperationType::FUNCTION;
-        
-        loader.load(data);
-        
-        std::stack<calculator::number> stack;
-        stack.push(0);
-        
-        calculator::number result = loader.execute(data, stack);
-        
-        if (abs(result - 1) >= 0.01) {
-            throw std::runtime_error("Addition failed: expected 0, got " + std::to_string(result));
-        }
-        
-        if (stack.size() != 1) {
-            throw std::runtime_error("Stack should be empty after execution");
-        }
-    });
-
-    // Тест на выполнение операции через плагин
-    addCustomTest([]() {
-        calculator::DllLoader loader("plugins");
-        calculator::PluginData data;
-        data.name = "^";
-        data.type = calculator::OperationType::OPERATION;
-        
-        loader.load(data);
-        
-        std::stack<calculator::number> stack;
-        stack.push(2);
-        stack.push(3);
-        
-        calculator::number result = loader.execute(data, stack);
-        
-        if (result != 8) {
-            throw std::runtime_error("Addition failed: expected 8, got " + std::to_string(result));
-        }
-        
-        if (stack.size() != 1) {
-            throw std::runtime_error("Stack should be empty after execution");
-        }
-    });
-
-    // Тест на проверку типа операции
-    addCustomTest([]() {
-        calculator::DllLoader loader("plugins");
-        calculator::PluginData opData;
-        opData.name = "^";
-        opData.type = calculator::OperationType::OPERATION;
-        
-        loader.load(opData);
-        
-        if (!loader.isOperation()) {
-            throw std::runtime_error("add should be an operation");
-        }
-        
-        if (loader.isFunction()) {
-            throw std::runtime_error("add should not be a function");
+            throw std::runtime_error("Failed to load plugins from directory");
         }
     });
 
     // Тест на проверку типа функции
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на проверку типа функции\n";
         calculator::DllLoader loader("plugins");
-        calculator::PluginData funcData;
-        funcData.name = "sqrt";
-        funcData.type = calculator::OperationType::FUNCTION;
-        
-        loader.load(funcData);
-        
-        if (!loader.isFunction()) {
-            throw std::runtime_error("sqrt should be a function");
+
+        if (!loader.isFunction("sin")) {
+            throw std::runtime_error("'sin' should be a function");
         }
-        
-        if (loader.isOperation()) {
-            throw std::runtime_error("sqrt should not be an operation");
+
+        if (loader.isOperation("sin")) {
+            throw std::runtime_error("'sin' should not be an operation");
+        }
+    });
+
+    // Тест на проверку типа операции
+    addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на проверку типа операции\n";
+        calculator::DllLoader loader("plugins");
+
+        if (!loader.isOperation("^")) {
+            throw std::runtime_error("'^' should be an operation");
+        }
+
+        if (loader.isFunction("^")) {
+            throw std::runtime_error("'^' should not be a function");
+        }
+    });
+
+    // Тест на выполнение функции cos(0) = 1
+    addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции cos(0) = 1\n";
+        calculator::DllLoader loader("plugins");
+
+        std::stack<calculator::number> stack;
+        stack.push(0);
+
+        calculator::number result = loader.execute("cos", stack);
+
+        if (abs(result - 1) >= 0.01) {
+            throw std::runtime_error("cos(0) failed: expected 1, got " + std::to_string(result));
+        }
+
+        if (stack.size() != 1) {
+            throw std::runtime_error("Stack should contain one element after execution");
+        }
+    });
+
+    // Тест на выполнение операции возведения в степень 2^3 = 8
+    addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение операции возведения в степень 2^3 = 8\n";
+        calculator::DllLoader loader("plugins");
+
+        std::stack<calculator::number> stack;
+        stack.push(2);
+        stack.push(3);
+
+        calculator::number result = loader.execute("^", stack);
+
+        if (result != 8) {
+            throw std::runtime_error("Power failed: expected 8, got " + std::to_string(result));
+        }
+
+        if (stack.size() != 1) {
+            throw std::runtime_error("Stack should contain one element after execution");
+        }
+    });
+
+    // Тест на выполнение функции sqrt(16) = 4
+    addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции sqrt(16) = 4\n";
+        calculator::DllLoader loader("plugins");
+
+        std::stack<calculator::number> stack;
+        stack.push(16);
+
+        calculator::number result = loader.execute("sqrt", stack);
+
+        if (result != 4) {
+            throw std::runtime_error("Square root failed: expected 4, got " + std::to_string(result));
+        }
+
+        if (stack.size() != 1) {
+            throw std::runtime_error("Stack should contain one element after execution");
+        }
+    });
+
+    // Тест на выполнение функции log(1) = 0
+    addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции log(1) = 0\n";
+        calculator::DllLoader loader("plugins");
+
+        std::stack<calculator::number> stack;
+        stack.push(1);
+
+        calculator::number result = loader.execute("log", stack);
+
+        if (abs(result - 0.0) >= 0.01) {
+            throw std::runtime_error("Log failed: expected 0, got " + std::to_string(result));
+        }
+
+        if (stack.size() != 1) {
+            throw std::runtime_error("Stack should contain one element after execution");
         }
     });
 
     // Тест на приоритет операции
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на приоритет операции\n";
         calculator::DllLoader loader("plugins");
-        calculator::PluginData data;
-        data.name = "^";
-        data.type = calculator::OperationType::OPERATION;
-        
-        loader.load(data);
-        
-        size_t precedence = loader.getPrecedence();
-        std::cout << "Precedence for 'add': " << precedence << std::endl;
+
+        size_t precedence = loader.getPrecedence("^");
+        std::cout << "Precedence for '^': " << precedence << std::endl;
+
+        if (precedence == 0) {
+            throw std::runtime_error("Precedence for '^' should not be 0");
+        }
     });
 
     // Тест на смену пути плагинов
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на смену пути плагинов\n";
         calculator::DllLoader loader("plugins");
         loader.setPluginsPath("custom_plugins");
-        
+
         if (loader.getPluginsPath() != "custom_plugins") {
             throw std::runtime_error("Plugins path was not changed correctly");
         }
     });
 
-    // Тест на выгрузку плагина
-    addCustomTest([]() {
-        calculator::DllLoader loader("plugins");
-        calculator::PluginData data;
-        data.name = "^";
-        data.type = calculator::OperationType::OPERATION;
-        
-        loader.load(data);
-        
-        if (!loader.isPluginLoaded()) {
-            throw std::runtime_error("Plugin should be loaded before unload");
-        }
-        
-        loader.unload();
-        
-        if (loader.isPluginLoaded()) {
-            throw std::runtime_error("Plugin should be unloaded after unload()");
-        }
-        
-        if (!loader.getCurrentPluginName().empty()) {
-            throw std::runtime_error("Plugin name should be empty after unload");
-        }
-    });
-
     // Тест на обработку несуществующего плагина
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на обработку несуществующего плагина\n";
         calculator::DllLoader loader("plugins");
-        calculator::PluginData data;
-        data.name = "nonexistent_plugin";
-        data.type = calculator::OperationType::OPERATION;
-        bool loaded;
-        try{
-            loaded = loader.load(data);
+
+        try {
+            loader.isFunction("nonexistent_plugin");
         }
-        catch (const std::exception& e){
+        catch (const calculator::DLLException&) {
             return;
         }
-        
-        if (loaded) {
-            throw std::runtime_error("Should not load nonexistent plugin");
-        }
+
+        throw std::runtime_error("Should not find nonexistent plugin");
     });
 
-    // Тест на выполнение функции
+    // Тест на выгрузку всех плагинов
     addCustomTest([]() {
+        std::cout << "\033[33m[INFO]\033[0m Тест на выгрузку всех плагинов\n";
         calculator::DllLoader loader("plugins");
-        calculator::PluginData data;
-        data.name = "sqrt";
-        data.type = calculator::OperationType::FUNCTION;
-        
-        loader.load(data);
-        
-        std::stack<calculator::number> stack;
-        stack.push(16);
-        
-        calculator::number result = loader.execute(data, stack);
-        
-        if (result != 4) {
-            throw std::runtime_error("Square root failed: expected 4, got " + std::to_string(result));
+
+        loader.unloadPlugins();
+
+        try {
+            loader.isFunction("sin");
         }
+        catch (const calculator::DLLException&) {
+            return;
+        }
+
+        throw std::runtime_error("Plugin should be unloaded after unloadPlugins()");
     });
 }
