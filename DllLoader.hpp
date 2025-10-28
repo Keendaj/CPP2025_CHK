@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <iostream>
 #include <stack>
+#include <vector>
 #include "utils/Exceptions/DLL/DLLException.hpp"
 #include "utils/Exceptions/DLL/LoadException.hpp"
 #include "utils/Exceptions/DLL/FuncitonNotFoundException.hpp"
@@ -14,12 +15,9 @@ namespace calculator{
     class DllLoader {
         
         private:
+            std::vector<PluginData> data;
             str pluginsPath = "plugins";
-            HMODULE currentPlugin = nullptr;
-            str currentPluginName;
-            
-            HMODULE findAndLoadPlugin(const PluginData& data);
-            HMODULE checkPlugin(crStr filepath, const PluginData& data);
+            HMODULE loadAndCheckPlugin(crStr filepath);
 
             std::vector<str> findDllFiles() const;
         public:
@@ -27,18 +25,14 @@ namespace calculator{
             explicit DllLoader(crStr path);
             ~DllLoader();
 
-            bool load(const PluginData& data);
-            number execute(const PluginData& data, std::stack<number>& st);
-            bool isOperation() const;
-            bool isFunction() const;
-            size_t getPrecedence() const;
-
-            bool isPluginLoaded() const { return currentPlugin != nullptr; }
-            str getPluginsPath() const { return pluginsPath; }
-            str getCurrentPluginName() const { return currentPluginName; }
-            str getCurrentPluginPath() const;
+            bool loadPlugins();
+            number execute(crStr name, std::stack<number>& st);
+            bool isOperation(crStr name) const noexcept ;
+            bool isFunction(crStr name) const noexcept ;
+            size_t getPrecedence(crStr name) const noexcept ;
+            str getPluginsPath() const noexcept { return pluginsPath; }
             
             void setPluginsPath(crStr path);
-            void unload();
+            void unloadPlugins();
     };
 }

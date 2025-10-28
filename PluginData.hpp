@@ -10,5 +10,8 @@ namespace calculator {
     {
         str name;
         OperationType type;
+        size_t precedence = 0;
+        str path;
+        HMODULE handle = nullptr;
     };
 }

@@ -30,7 +30,6 @@ int main(){
             
             std::cerr << e.what();
         }
-        calc.getParsedString();
     }
 
     return 0;

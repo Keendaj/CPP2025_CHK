@@ -6,6 +6,7 @@
 #include <iostream>
 #include <filesystem>
 #include <windows.h>
+#include "utils/Exceptions/Math/ZeroDivisionException.hpp"
 
 #define TESTING
 
@@ -22,17 +23,15 @@ bool Calculator::isFunction(crStr token) {
     if (token.size() == 1 && (token == "+" || token == "-" || token == "*" || token == "/")){
         return false;
     }
+
     try
     {
-        loader.unload();
-        loader.load({token, OperationType::FUNCTION});
+        return loader.isFunction(token);
     }
-    catch(const LoadExecption& e)
+    catch(const DLLException& e)
     {
-        return false;
+        throw e;
     }
-
-    return true;
 }
 
 bool Calculator::isOperator(crStr token) {
@@ -41,13 +40,11 @@ bool Calculator::isOperator(crStr token) {
     }
     try
     {
-        loader.unload();
-        loader.load({token, OperationType::OPERATION});
-        return true;
+        return loader.isOperation(token);
     }
-    catch(const LoadExecption& e)
+    catch(const DLLException& e)
     {
-        return false;
+        throw e;
     }
 }
 
@@ -65,19 +62,17 @@ int Calculator::getPrecedence(crStr token) {
     
     try
     {
-        loader.unload();
-        loader.load({token, OperationType::FUNCTION});
-        return loader.getPrecedence();
+        return loader.getPrecedence(token);
     }
-    catch(const std::exception& e)
+    catch(const DLLException& e)
     {
+        throw e;
     }
-    return 0;
 }
 
 number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
     if (pos >= strToCalc.size()) {
-        throw std::runtime_error("Позиция выходит за границы строки");
+        throw std::runtime_error("Incorrect number position");
     }
 
     size_t start = pos;
@@ -97,7 +92,7 @@ number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
 
     len = pos - start;
     if (len == 0 || start + len > strToCalc.size()) {
-        throw std::runtime_error("Некорректная длина числа");
+        throw std::runtime_error("Incorrect number length");
     }
 
     str token = strToCalc.substr(start, len);
@@ -105,13 +100,13 @@ number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
     try {
         return std::stod(token);
     } catch (...) {
-        throw std::runtime_error("Ошибка: некорректное число: " + token);
+        throw std::runtime_error("Error: incorrect number: " + token);
     }
 }
 
 str Calculator::readOperation(crStr strToCalc, size_t pos, size_t& len) {
     if (pos >= strToCalc.size()) {
-        throw std::runtime_error("Позиция выходит за границы строки");
+        throw std::runtime_error("Incorrect operation position");
     }
 
     size_t start = pos;
@@ -127,7 +122,7 @@ str Calculator::readOperation(crStr strToCalc, size_t pos, size_t& len) {
 
     len = pos - start;
     if (len == 0 || start + len > strToCalc.size()) {
-        throw std::runtime_error("Некорректная длина операции");
+        throw std::runtime_error("Incorrect operation length");
     }
     str op = strToCalc.substr(start, len);
 
@@ -172,7 +167,7 @@ void Calculator::parse(crStr strToCalc) {
             }
             
             if (opStack.empty()){
-                throw std::runtime_error("Ошибка: несбалансированные скобки");
+                throw std::runtime_error("Error with brackets");
             }
 
             opStack.pop();
@@ -192,7 +187,7 @@ void Calculator::parse(crStr strToCalc) {
             str op = readOperation(strToCalc, pos, length);
 
             if (op.empty()) {
-                throw std::runtime_error("Не удалось распознать оператор");
+                throw std::runtime_error("Couldn't parse operation");
             }
             pos += length;
 
@@ -221,15 +216,15 @@ void Calculator::parse(crStr strToCalc) {
                 continue;
             }
 
-            throw std::runtime_error("Неизвестная операция: " + op);
+            throw std::runtime_error("Unknown operation: " + op);
         }
 
-        throw std::runtime_error(str("Неизвестный символ: ") + c);
+        throw std::runtime_error("Unknown symbol: " + c);
     }
     
     while (!opStack.empty()) {
         if (opStack.top() == "(")
-            throw std::runtime_error("Ошибка: несбалансированные скобки");
+            throw std::runtime_error("Error with brackets");
         output << opStack.top() << ' ';
         opStack.pop();
     }
@@ -253,7 +248,7 @@ number Calculator::calculate(crStr strToCalc){
         }
         else if (isOperator(token)) {
             if (stack.size() < 2){
-                throw std::runtime_error("Ошибка: недостаточно операндов для бинарной операции");
+                throw std::runtime_error("Error: too few operands for binary function");
             }
             number b = stack.top(); 
             stack.pop();
@@ -272,7 +267,7 @@ number Calculator::calculate(crStr strToCalc){
             }
             else if (token == "/") {
                 if (b == 0) {
-                    throw std::runtime_error("Деление на ноль");
+                    throw ZeroDivisionException();
                 }
                 res = a / b;
             }
@@ -282,7 +277,7 @@ number Calculator::calculate(crStr strToCalc){
                 #endif
                 stack.push(b);
                 stack.push(a);
-                loader.execute({token, OperationType::OPERATION}, stack);
+                loader.execute(token, stack);
                 
             }
 
@@ -290,9 +285,9 @@ number Calculator::calculate(crStr strToCalc){
         }
         else if (isFunction(token)) {
             if (stack.empty())
-                throw std::runtime_error("Ошибка: недостаточно операндов для функции");
+                throw std::runtime_error("Error: too few operands for unary function");
             
-            loader.execute({token, OperationType::OPERATION}, stack);
+            loader.execute(token, stack);
 
             
             #ifdef TESTING
@@ -300,15 +295,15 @@ number Calculator::calculate(crStr strToCalc){
             #endif
         }
         else {
-            throw std::runtime_error("Неизвестный токен: " + token);
+            throw std::runtime_error("Unknown token: " + token);
         }
     }
 
     if (stack.size() != 1)
-        throw std::runtime_error("Ошибка: неверное количество элементов после вычислений");
+        throw std::runtime_error("Error: false number of elements after calculation");
     
-    #ifdef TESTING
-        std::cout << "Результат: "<< stack.top() << std::endl;
-    #endif
+        #ifdef TESTING
+            std::cout << "Результат: "<< stack.top() << std::endl;
+        #endif
     return stack.top();
 }

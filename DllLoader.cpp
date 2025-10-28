@@ -6,46 +6,10 @@ namespace fs = std::filesystem;
 
 DllLoader::DllLoader(crStr path) : pluginsPath(path) {}
 
-DllLoader::~DllLoader() { unload(); }
+DllLoader::~DllLoader() { unloadPlugins(); }
 
-bool DllLoader::load(const PluginData& data) {
-    try {
-        HMODULE newPlugin = findAndLoadPlugin(data);
-        if (newPlugin) {
-            unload();
-            currentPlugin = newPlugin;
-            return true;
-        }
-    } catch (const std::exception& e) {
-        throw LoadExecption("Failed to load plugin: " + std::string(e.what()), pluginsPath);
-    }
-    
-    return false;
-}
 
-HMODULE DllLoader::findAndLoadPlugin(const PluginData& data) {
-    auto dllFiles = findDllFiles();
-    
-    for (const auto& dllFile : dllFiles) {
-        #ifdef TESTING
-            std::cout << "Обработка: " << dllFile << std::endl;
-        #endif
-        HMODULE candidate = checkPlugin(dllFile, data);
-        if (candidate) {
-            #ifdef TESTING
-                std::cout << "Принят: " << dllFile << std::endl;
-            #endif
-            currentPluginName = dllFile;
-            return candidate;
-        }
-    }
-    
-    throw DLLException("Couldn't find '" + data.name + "' with type: " + 
-                      (data.type == OperationType::FUNCTION ? "FUNCTION" : "OPERATION"));
-}
-
-HMODULE DllLoader::checkPlugin(crStr filepath, const PluginData& data) {
-
+HMODULE DllLoader::loadAndCheckPlugin(crStr filepath) {
     HMODULE module = LoadLibraryA(filepath.c_str());
     if (!module) {
         return nullptr;
@@ -54,69 +18,47 @@ HMODULE DllLoader::checkPlugin(crStr filepath, const PluginData& data) {
     auto getNameFunc = (str(*)())GetProcAddress(module, "getName");
     auto isOperationFunc = (bool(*)())GetProcAddress(module, "isOperation");
     auto isFunctionFunc = (bool(*)())GetProcAddress(module, "isFunction");
+    auto getPrecedenceFunc = (size_t(*)())GetProcAddress(module, "getPrecedence");
 
-    if (!getNameFunc) {
-        throw FunctionNotFoundException(currentPluginName, "getName", getCurrentPluginPath());
+    if (!getNameFunc || !isOperationFunc || !isFunctionFunc || !getPrecedenceFunc) {
         FreeLibrary(module);
         return nullptr;
     }
 
-    if (!isFunctionFunc) {
-        throw FunctionNotFoundException(currentPluginName, "isFunction", getCurrentPluginPath());
-        FreeLibrary(module);
-        return nullptr;
-    }
+    PluginData pd;
+    pd.name = getNameFunc();
+    pd.type = isFunctionFunc() ? OperationType::FUNCTION : OperationType::OPERATION;
+    pd.precedence = getPrecedenceFunc ? getPrecedenceFunc() : 0;
+    pd.path = filepath;
+    pd.handle = module;
 
-    if (!isOperationFunc) {
-        throw FunctionNotFoundException(currentPluginName, "isOperation", getCurrentPluginPath());
-        FreeLibrary(module);
-        return nullptr;
-    }
+    data.push_back(pd);
 
-    if(getNameFunc() == data.name
-        && (data.type == OperationType::FUNCTION 
-            && isFunctionFunc())) {
-                return module;
-    }
+    #ifdef TESTING
+        std::cout << "Loaded plugin: " << pd.name 
+        << " [" << (pd.type == OperationType::FUNCTION ? "FUNCTION" : "OPERATION") << "]" << std::endl;
+    #endif
 
-    if (getNameFunc() == data.name
-        && (data.type == OperationType::OPERATION 
-            && isOperationFunc())) {
-                return module;
-    }
-
-    FreeLibrary(module);
-    return nullptr;
+    return module;
 }
 
-str DllLoader::getCurrentPluginPath() const {
-    if (currentPluginName.empty()) {
-        return "No plugin loaded";
+void DllLoader::unloadPlugins() {
+    for (auto& pd : data) {
+        if (pd.handle) {
+            FreeLibrary(pd.handle);
+            pd.handle = nullptr;
+        }
     }
-    return fs::path(currentPluginName).filename().string();
+    data.clear();
 }
 
-void DllLoader::setPluginsPath(crStr path) {
-    if (isPluginLoaded()) {
-        unload();
-    }
-    pluginsPath = path;
-}
-
-void DllLoader::unload() {
-    if (currentPlugin) {
-        FreeLibrary(currentPlugin);
-        currentPlugin = nullptr;
-        currentPluginName.clear();
-    }
-}
 
 std::vector<str> DllLoader::findDllFiles() const {
     std::vector<str> dllFiles;
     
     try {
         if (!fs::exists(pluginsPath) || !fs::is_directory(pluginsPath)) {
-            throw LoadExecption("Couldn't open plugins directory", pluginsPath);
+            throw LoadException("Couldn't open plugins directory", pluginsPath);
         }
         
         for (const auto& entry : fs::directory_iterator(pluginsPath)) {
@@ -125,72 +67,126 @@ std::vector<str> DllLoader::findDllFiles() const {
             }
         }
     } catch (const fs::filesystem_error& e) {
-        throw LoadExecption("Filesystem error: " + std::string(e.what()), pluginsPath);
+        throw LoadException("Filesystem error: " + std::string(e.what()), pluginsPath);
     }
     
     if (dllFiles.empty()) {
-        throw LoadExecption("No DLL files found in directory", pluginsPath);
+        throw LoadException("No DLL files found in directory", pluginsPath);
     }
     
     return dllFiles;
 }
 
-number DllLoader::execute(const PluginData& data, std::stack<number>& st) {
-    if (!isPluginLoaded() || getCurrentPluginName() != data.name) {
-        if (!load(data)) {
-            throw DLLException("Failed to load plugin: " + data.name);
+bool DllLoader::loadPlugins() {
+    unloadPlugins();
+
+    auto dllFiles = findDllFiles();
+    bool loadedAny = false;
+
+    for (const auto& dllFile : dllFiles) {
+        #ifdef TESTING
+        std::cout << "Loading DLLs: " << dllFile << std::endl;
+        #endif
+        HMODULE module = LoadLibraryA(dllFile.c_str());
+        if (!module) {
+            std::cerr << "Can'l load DLLs: " << dllFile << std::endl;
+            continue;
+        }
+
+        auto getNameFunc = (str(*)())GetProcAddress(module, "getName");
+        auto isOperationFunc = (bool(*)())GetProcAddress(module, "isOperation");
+        auto isFunctionFunc = (bool(*)())GetProcAddress(module, "isFunction");
+        auto getPrecedenceFunc = (size_t(*)())GetProcAddress(module, "getPrecedence");
+
+        if (!getNameFunc || !isOperationFunc || !isFunctionFunc) {
+            std::cerr << "Incorrect plugin: " << dllFile << std::endl;
+            FreeLibrary(module);
+            continue;
+        }
+
+        PluginData pd;
+        pd.name = getNameFunc();
+        pd.type = isFunctionFunc() ? OperationType::FUNCTION : OperationType::OPERATION;
+        pd.precedence = getPrecedenceFunc ? getPrecedenceFunc() : 0;
+        pd.handle = module;
+        pd.path = dllFile;
+
+        data.push_back(pd);
+
+        
+    }
+
+    return true;
+}
+
+bool DllLoader::loadPlugins() {
+    unloadPlugins();
+
+    auto dllFiles = findDllFiles();
+    bool loadedAny = false;
+
+    for (const auto& dllFile : dllFiles) {
+        if(loadAndCheckPlugin(dllFile)){
+            loadedAny = true;
         }
     }
-    
-    auto calculateFunc = (void(*)(std::stack<double>&))GetProcAddress(currentPlugin, "getCalculation");
+
+    return loadedAny;
+}
+
+number DllLoader::execute(crStr name, std::stack<number>& st) {
+    auto it = std::find_if(data.begin(), data.end(), [&](const PluginData& d) {
+        return d.name == name;
+    });
+
+    if (it == data.end()) {
+        throw DLLException("Coudln't find plugin: " + name);
+    }
+
+    auto calculateFunc = (void(*)(std::stack<number>&))GetProcAddress(it->handle, "getCalculation");
+
     if (!calculateFunc) {
-        throw FunctionNotFoundException(currentPluginName, "getCalculation", getCurrentPluginPath());
+        throw FunctionNotFoundException(it->name, "getCalculation", it->path);
     }
 
     calculateFunc(st);
-    
+
     if (st.empty()) {
         throw std::runtime_error("Stack is empty after calculation");
     }
-    
+
     return st.top();
 }
 
-bool DllLoader::isOperation() const {
-    if (!currentPlugin) {
-        throw DLLException("No plugin is currently loaded");
+bool DllLoader::isOperation(crStr name) const noexcept {
+    auto it = std::find_if(data.begin(), data.end(),
+        [&](const PluginData& pd) { return pd.name == name; });
+
+    if (it == data.end()) {
+        throw DLLException("Couldn't find plugin: " + name);
     }
-    
-    auto isOperationFunc = (bool(*)())GetProcAddress(currentPlugin, "isOperation");
-    if (!isOperationFunc) {
-        throw FunctionNotFoundException(currentPluginName, "isOperation", getCurrentPluginPath());
-    }
-    
-    return isOperationFunc();
+
+    return it->type == OperationType::OPERATION;
 }
 
-bool DllLoader::isFunction() const {
-    if (!currentPlugin) {
-        throw DLLException("No plugin is currently loaded");
+bool DllLoader::isFunction(crStr name) const noexcept {
+    auto it = std::find_if(data.begin(), data.end(),
+        [&](const PluginData& pd) { return pd.name == name; });
+
+    if (it == data.end()) {
+        throw DLLException("Couldn't find plugin: " + name);
     }
-    
-    auto isFunctionFunc = (bool(*)())GetProcAddress(currentPlugin, "isFunction");
-    if (!isFunctionFunc) {
-        throw FunctionNotFoundException(currentPluginName, "isFunction", getCurrentPluginPath());
-    }
-    
-    return isFunctionFunc();
+
+    return it->type == OperationType::FUNCTION;
 }
 
-size_t DllLoader::getPrecedence() const {
-    if (!currentPlugin) {
-        throw DLLException("No plugin is currently loaded");
+size_t DllLoader::getPrecedence(crStr name) const noexcept {
+    auto it = std::find_if(data.begin(), data.end(),
+        [&](const PluginData& pd) { return pd.name == name; });
+
+    if (it == data.end()) {
+        throw DLLException("Couldn't find plugin: " + name);
     }
-    
-    auto getPrecedenceFunc = (size_t(*)())GetProcAddress(currentPlugin, "getPrecedence");
-    if (!getPrecedenceFunc) {
-        return 0;
-    }
-    
-    return getPrecedenceFunc();
+
+    return it->precedence;
 }
