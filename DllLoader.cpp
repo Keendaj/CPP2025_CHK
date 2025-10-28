@@ -1,5 +1,6 @@
 #include "DllLoader.hpp"
 #include <algorithm>
+#include "utils/Exceptions/Math/MathException.hpp"
 
 #define TESTING
 
@@ -108,8 +109,13 @@ number DllLoader::execute(crStr name, std::stack<number>& st) {
     if (!calculateFunc) {
         throw FunctionNotFoundException(it->name, "getCalculation", it->path);
     }
-
-    calculateFunc(st);
+    try{
+        calculateFunc(st);
+    }
+    catch(const std::exception& e){
+        throw;
+    }
+    
 
     if (st.empty()) {
         throw std::runtime_error("Stack is empty after calculation");

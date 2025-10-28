@@ -26,10 +26,10 @@ void startCalculations() {
 
         try {
             calc.calculate(input);
-            calc.getParsedString();
         } catch (const std::exception& e) {
             
             std::cerr << e.what();
+            std::cout << std::endl;
         }
     }
 }
@@ -48,7 +48,7 @@ void runTests() {
 int main(){
     SetConsoleOutputCP(CP_UTF8);
     
-    runTests();
+    startCalculations();
 
     return 0;
 }

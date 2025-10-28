@@ -13,7 +13,7 @@
 using namespace calculator;
 
 bool Calculator::isFunction(crStr token) {
-    if (token.empty()) {
+    if (token.empty() || token == "(" || token == ")") {
         return false;
     }
     
@@ -35,6 +35,9 @@ bool Calculator::isFunction(crStr token) {
 }
 
 bool Calculator::isOperator(crStr token) {
+    if (token.empty() || token == "(" || token == ")"){
+        return false;
+    }
     if(token == "+" || token == "-" || token == "*" || token == "/"){
         return true;
     }
@@ -43,6 +46,7 @@ bool Calculator::isOperator(crStr token) {
         #ifdef TESTING
             std::cout << "Проверка на операцию: " << token << std::endl;
         #endif
+        
         return loader.isOperation(token);
     }
     catch(const DLLException& e)
@@ -53,6 +57,7 @@ bool Calculator::isOperator(crStr token) {
 
 int Calculator::getPrecedence(crStr token) {
     static const std::unordered_map<str, int> precedenceMap = {
+        {"(", 256},
         {"*", 2},
         {"/", 2},
         {"+", 1},
