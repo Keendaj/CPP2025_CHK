@@ -5,12 +5,17 @@
 
 
 void startCalculations() {
-    
-    
-    calculator::Calculator calc("plugins");
+    calculator::Calculator* calc = nullptr;
+
+    try {
+        calc = new calculator::Calculator("plugins");
+    } catch (const std::exception& e) {
+        std::cerr << "Ошибка инициализации калькулятора: " << e.what() << std::endl;
+        return;
+    }
 
     std::cout << "Калькулятор RPN" << std::endl;
-    std::cout << "Вводите числа и операции (+, -, *, /, ^, sin, cos, sqrt...)" << std::endl;
+    std::cout << "Вводите числа и операции (+, -, *, / ...)" << std::endl;
     std::cout << "Введите 'help' для справки, 'exit' для выхода" << std::endl;
 
     std::string input;
@@ -25,13 +30,15 @@ void startCalculations() {
         }
 
         try {
-            calc.calculate(input);
+            std::cout << "Результат вычисления: "<< calc->calculate(input) << std::endl;
         } catch (const std::exception& e) {
             
             std::cerr << e.what();
             std::cout << std::endl;
         }
     }
+
+    delete calc;
 }
 
 

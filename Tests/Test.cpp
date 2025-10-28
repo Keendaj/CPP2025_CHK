@@ -14,26 +14,25 @@ void Test::run() {
     for (size_t i = 0; i < tests.size(); ++i) {
         try {
             tests[i]();
-            output << "Test " << i + 1 << ": \033[32mPASS\033[0m\n";
+            output << "Test " << i + 1 << ": \033[32mPASS\033[0m" << std::endl << std::flush;
             ++passCount;
         } catch (const std::exception& e) {
-            output << "Test " << i + 1 << ": \033[31mFAIL\033[0m - " << e.what() << "\n";
+            output << "Test " << i + 1 << ": \033[31mFAIL\033[0m - " << e.what() << ""<< std::endl << std::flush;
             ++failCount;
         } catch (...) {
-            output << "Test " << i + 1 << ": \033[31mFAIL\033[0m - unokwn error\n";
+            output << "Test " << i + 1 << ": \033[31mFAIL\033[0m - unokwn error" << std::endl << std::flush;
             ++failCount;
         }
-        output << "\n";
     }
 
-    output << "\nSummary: " << passCount << " passed, " << failCount << " failed.\n";
+    output << "\nSummary: " << passCount << " passed, " << failCount << " failed." << std::endl << std::flush;
 }
 
 void Test::addParserTests(){
     //Тест на обычную работу
     addCustomTest([]() 
     {
-        std::cout << "\033[33m[INFO]\033[0m Тест на обычную работу (парсинг 2 + 3 * 4)\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на обычную работу (парсинг 2 + 3 * 4)" << std::endl;
         calculator::Calculator calc;
         calc.calculate("2 + 3 * 4");
         std::string expected = "2 3 4 * + ";
@@ -46,7 +45,7 @@ void Test::addParserTests(){
     //Тест на функции
     addCustomTest([]()
     {
-        std::cout << "\033[33m[INFO]\033[0m Тест на функции (парсинг sqrt(16) + cos(0))\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на функции (парсинг sqrt(16) + cos(0))" << std::endl;
         calculator::Calculator calc;
         calc.calculate("sqrt(16) + cos(0)");
         std::string expected = "16 sqrt 0 cos + ";
@@ -59,7 +58,7 @@ void Test::addParserTests(){
     //Тест на унарный минус
     addCustomTest([]()
     {
-        std::cout << "\033[33m[INFO]\033[0m Тест на унарный минус (-3 + 5)\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на унарный минус (-3 + 5)" << std::endl;
         calculator::Calculator calc;
         calc.calculate("-3 + 5");
         std::string expected = "0 3 - 5 + ";
@@ -71,7 +70,7 @@ void Test::addParserTests(){
 
     //Тест на скобки
     addCustomTest([](){
-        std::cout << "\033[33m[INFO]\033[0m Тест на скобки (2 * (3 + (4 - 1)))\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на скобки (2 * (3 + (4 - 1)))" << std::endl;
         calculator::Calculator calc;
         calc.calculate("2 * (3 + (4 - 1))");
         std::string expected = "2 3 4 1 - + * ";
@@ -83,7 +82,7 @@ void Test::addParserTests(){
 
     //Тест на операцию из dll
     addCustomTest([](){
-        std::cout << "\033[33m[INFO]\033[0m Тест на нестандартную операцию из DLL (2 ^ 3 + 4)\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на нестандартную операцию из DLL (2 ^ 3 + 4)" << std::endl;
         calculator::Calculator calc;
         calc.calculate("2 ^ 3 + 4");
         std::string expected = "2 3 ^ 4 + "; 
@@ -99,7 +98,7 @@ void Test::addCalculationTests()
 {
     //Тест на обычную работу
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на обычную работу (2 + 3 * 4)\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на обычную работу (2 + 3 * 4)" << std::endl;
         calculator::Calculator calc;
         int result = calc.calculate("2 + 3 * 4");
         if (result != 14)
@@ -108,7 +107,7 @@ void Test::addCalculationTests()
 
     //Тест на функции
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на функции (sqrt(16) + cos(0))\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на функции (sqrt(16) + cos(0))" << std::endl;
         calculator::Calculator calc;
         int result = calc.calculate("sqrt(16) + cos(0)");
         if (result != 5)
@@ -117,7 +116,7 @@ void Test::addCalculationTests()
 
     //Тест на унарный минус
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на унарный минус (-3 + 5)\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на унарный минус (-3 + 5)" << std::endl;
         calculator::Calculator calc;
         int result = calc.calculate("-3 + 5");
         if (result != 2)
@@ -126,7 +125,7 @@ void Test::addCalculationTests()
 
     //Тест на скобки
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на скобки (2 * (3 + 4))\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на скобки (2 * (3 + 4))" << std::endl;
         calculator::Calculator calc;
         int result = calc.calculate("2 * (3 + 4)");
         if (result != 14)
@@ -147,7 +146,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на загрузку всех плагинов
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на загрузку всех плагинов\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на загрузку всех плагинов" << std::endl;
         calculator::DllLoader loader("plugins");
         bool loaded = loader.loadPlugins();
 
@@ -158,7 +157,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на проверку типа функции
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на проверку типа функции\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на проверку типа функции" << std::endl;
         calculator::DllLoader loader("plugins");
 
         if (!loader.isFunction("sin")) {
@@ -172,7 +171,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на проверку типа операции
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на проверку типа операции\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на проверку типа операции" << std::endl;
         calculator::DllLoader loader("plugins");
 
         if (!loader.isOperation("^")) {
@@ -186,7 +185,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на выполнение функции cos(0) = 1
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции cos(0) = 1\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции cos(0) = 1" << std::endl;
         calculator::DllLoader loader("plugins");
 
         std::stack<calculator::number> stack;
@@ -205,7 +204,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на выполнение операции возведения в степень 2^3 = 8
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение операции возведения в степень 2^3 = 8\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение операции возведения в степень 2^3 = 8" << std::endl;
         calculator::DllLoader loader("plugins");
 
         std::stack<calculator::number> stack;
@@ -225,7 +224,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на выполнение функции sqrt(16) = 4
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции sqrt(16) = 4\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции sqrt(16) = 4" << std::endl;
         calculator::DllLoader loader("plugins");
 
         std::stack<calculator::number> stack;
@@ -244,7 +243,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на выполнение функции log(1) = 0
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции log(1) = 0\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на выполнение функции log(1) = 0" << std::endl;
         calculator::DllLoader loader("plugins");
 
         std::stack<calculator::number> stack;
@@ -263,7 +262,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на приоритет операции
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на приоритет операции\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на приоритет операции" << std::endl;
         calculator::DllLoader loader("plugins");
 
         size_t precedence = loader.getPrecedence("^");
@@ -276,7 +275,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на смену пути плагинов
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на смену пути плагинов\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на смену пути плагинов" << std::endl;
         calculator::DllLoader loader("plugins");
         loader.setPluginsPath("custom_plugins");
 
@@ -287,7 +286,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на обработку несуществующего плагина
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на обработку несуществующего плагина\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на обработку несуществующего плагина" << std::endl;
         calculator::DllLoader loader("plugins");
 
         try {
@@ -302,7 +301,7 @@ void Test::addDllLoaderTests() {
 
     // Тест на выгрузку всех плагинов
     addCustomTest([]() {
-        std::cout << "\033[33m[INFO]\033[0m Тест на выгрузку всех плагинов\n";
+        std::cout << "\033[33m[INFO]\033[0m Тест на выгрузку всех плагинов" << std::endl;
         calculator::DllLoader loader("plugins");
 
         loader.unloadPlugins();
