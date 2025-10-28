@@ -8,8 +8,6 @@
 #include <windows.h>
 #include "utils/Exceptions/Math/ZeroDivisionException.hpp"
 
-#define TESTING
-
 using namespace calculator;
 
 bool Calculator::isFunction(crStr token) {

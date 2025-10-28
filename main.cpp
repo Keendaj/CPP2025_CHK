@@ -7,7 +7,7 @@
 void startCalculations() {
     
     
-    calculator::Calculator calc("Plugins");
+    calculator::Calculator calc("plugins");
 
     std::cout << "Калькулятор RPN" << std::endl;
     std::cout << "Вводите числа и операции (+, -, *, /, ^, sin, cos, sqrt...)" << std::endl;
@@ -45,10 +45,26 @@ void runTests() {
     t.run();
 }
 
-int main(){
+int main(int argc, char* argv[]) {
     SetConsoleOutputCP(CP_UTF8);
-    
-    startCalculations();
 
+    if (argc > 1) {
+        std::string arg = argv[1];
+        if (arg == "--test" || arg == "-t") {
+            runTests();
+            return 0;
+        } else if (arg == "--help" || arg == "-h") {
+            std::cout << "Использование: " << argv[0] << " [--test|-t] [--help|-h]" << std::endl;
+            std::cout << "Без аргументов: запускается интерактивный режим калькулятора" << std::endl;
+            std::cout << "--test, -t: запуск всех тестов" << std::endl;
+            std::cout << "--help, -h: вывод этой справки" << std::endl;
+            return 0;
+        } else {
+            std::cerr << "Неизвестный аргумент: " << arg << std::endl;
+            return 1;
+        }
+    }
+
+    startCalculations();
     return 0;
 }

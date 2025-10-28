@@ -2,7 +2,6 @@
 #include <algorithm>
 #include "utils/Exceptions/Math/MathException.hpp"
 
-#define TESTING
 
 using namespace calculator;
 namespace fs = std::filesystem;
