@@ -1,6 +1,13 @@
 #include "DllLoader.hpp"
 #include <algorithm>
+#include <filesystem>
 #include "utils/Exceptions/Math/MathException.hpp"
+#include "utils/Exceptions/DLL/LoadException.hpp"
+#include "utils/Exceptions/DLL/FuncitonNotFoundException.hpp"
+
+#ifdef TESTING
+    #include <iostream>
+#endif
 
 using namespace calculator;
 namespace fs = std::filesystem;
@@ -123,7 +130,9 @@ bool DllLoader::loadPlugins() {
     bool loadedAny = false;
 
     for (const auto& dllFile : dllFiles) {
-        loadAndCheckPlugin(dllFile);
+        if(loadAndCheckPlugin(dllFile)){
+            loadedAny = true;
+        }
     }
 
     return loadedAny;

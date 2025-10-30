@@ -17,7 +17,7 @@ namespace calculator {
             void parse(crStr strToCalc);
 
             str readOperation(crStr strToCalc, size_t pos, size_t& len);
-            number readNumber(crStr strToCalc, size_t pos, size_t& len);
+            str readNumber(crStr strToCalc, size_t pos, size_t& len);
 
             bool isOperator(crStr token);
             bool isFunction(crStr token);

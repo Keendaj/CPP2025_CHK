@@ -1,6 +1,7 @@
 #include "Test.hpp"
 #include "../Calculator.hpp"
 #include "../DllLoader.hpp"
+#include "utils/Exceptions/DLL/DLLException.hpp"
 
 void Test::addCustomTest(testFunction func) {
 

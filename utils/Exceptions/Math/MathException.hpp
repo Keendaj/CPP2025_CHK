@@ -7,7 +7,7 @@ namespace calculator {
             str operation;
             vecNumber operands;
         public:
-            MathException(crStr msg, crStr operation, const vecNumber& operands)
+            MathException(crStr msg, crStr operation, vecNumber operands)
             : CalculatorException(msg), operation(operation), operands(operands) {}
 
             const char* what() const noexcept override;

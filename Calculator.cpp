@@ -1,27 +1,19 @@
 #include "Calculator.hpp"
 #include <sstream>
 #include <stack>
-#include <stdexcept>
 #include <unordered_map>
-#include <iostream>
 #include <filesystem>
 #include <windows.h>
+#include "utils/Exceptions/DLL/DLLException.hpp"
 #include "utils/Exceptions/Math/ZeroDivisionException.hpp"
+
+#ifdef TESTING
+    #include <iostream>
+#endif
 
 using namespace calculator;
 
 bool Calculator::isFunction(crStr token) {
-    if (token.empty() || token == "(" || token == ")") {
-        return false;
-    }
-    
-    if (isdigit(token[0])){
-        return false;
-    }
-    if (token.size() == 1 && (token == "+" || token == "-" || token == "*" || token == "/")){
-        return false;
-    }
-
     try
     {
         #ifdef TESTING
@@ -36,9 +28,6 @@ bool Calculator::isFunction(crStr token) {
 }
 
 bool Calculator::isOperator(crStr token) {
-    if (token.empty() || token == "(" || token == ")"){
-        return false;
-    }
     if(token == "+" || token == "-" || token == "*" || token == "/"){
         return true;
     }
@@ -79,7 +68,7 @@ int Calculator::getPrecedence(crStr token) {
     }
 }
 
-number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
+str Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
     if (pos >= strToCalc.size()) {
         throw std::runtime_error("Incorrect number position");
     }
@@ -87,15 +76,12 @@ number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
     size_t start = pos;
     bool hasDot = false;
 
-    while  (pos < strToCalc.size() &&
-           (isdigit(strToCalc[pos]) ||
-           (strToCalc[pos] == '.' &&
-            !hasDot))) {
-
+    while (pos < strToCalc.size() &&
+          (isdigit(strToCalc[pos]) ||
+          (strToCalc[pos] == '.' && !hasDot))) {
         if (strToCalc[pos] == '.') {
             hasDot = true;
         }
-
         ++pos;
     }
 
@@ -107,7 +93,7 @@ number Calculator::readNumber(crStr strToCalc, size_t pos, size_t& len) {
     str token = strToCalc.substr(start, len);
 
     try {
-        return std::stod(token);
+        return token;
     } catch (...) {
         throw std::runtime_error("Error: incorrect number: " + token);
     }
@@ -155,7 +141,7 @@ void Calculator::parse(crStr strToCalc) {
 
         if (isdigit(c)) {
             size_t length = 0;
-            number num = readNumber(strToCalc, pos, length);
+            str num = readNumber(strToCalc, pos, length);
             output << num << ' ';
             pos += length;
             expectUnary = false;
@@ -223,10 +209,7 @@ void Calculator::parse(crStr strToCalc) {
             if (isFunction(op)) {
                 opStack.push(op);
                 continue;
-            }
-
-
-            
+            } 
 
             throw std::runtime_error("Unknown operation: " + op);
         }
@@ -235,8 +218,9 @@ void Calculator::parse(crStr strToCalc) {
     }
     
     while (!opStack.empty()) {
-        if (opStack.top() == "(")
+        if (opStack.top() == "("){
             throw std::runtime_error("Error with brackets");
+        }
         output << opStack.top() << ' ';
         opStack.pop();
     }
@@ -260,7 +244,16 @@ number Calculator::calculate(crStr strToCalc){
         #endif
         if (isdigit(token[0]) || 
             (token.size() > 1 && token[0] == '-' && isdigit(token[1]))) {
-            stack.push(std::stod(token));
+                try
+                {
+                    stack.push(strToNumber(token));
+                }
+                catch(const std::exception& e)
+                {
+                    throw std::runtime_error("Can't convert " + token);
+                }
+                
+            
         }
         else if (isOperator(token)) {
             if (stack.size() < 2){
@@ -294,6 +287,7 @@ number Calculator::calculate(crStr strToCalc){
                 stack.push(a);
                 stack.push(b);
                 loader.execute(token, stack);
+                
                 continue;
                 
             }
