@@ -7,8 +7,12 @@
     #define EXPORT 
 #endif
 
+struct calc_stack {
+    void* handle;
+};
+
 extern "C" {
-    EXPORT void getCalculation(std::stack<calculator::number>& operands);
+    EXPORT void getCalculation(calculator::number* operands, size_t* count);
     EXPORT bool isOperation() noexcept;
     EXPORT bool isFunction() noexcept;
     EXPORT const char* getName() noexcept;

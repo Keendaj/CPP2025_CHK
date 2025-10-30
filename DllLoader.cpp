@@ -146,7 +146,7 @@ number DllLoader::execute(str name, std::stack<number>& st) {
     if (it == data.end()) {
         throw DLLException("Coudln't find plugin: " + name);
     }
-    auto calculateFunc = (void(*)(std::stack<number>&))GetProcAddress(it->handle, "getCalculation");
+    auto calculateFunc = (void(*)(number* ,size_t*))GetProcAddress(it->handle, "getCalculation");
     if (!calculateFunc) {
         throw FunctionNotFoundException(it->name, "getCalculation", it->path);
     } 
@@ -154,13 +154,39 @@ number DllLoader::execute(str name, std::stack<number>& st) {
         #ifdef TESTING
             std::cout << "Токен: "<< name << std::endl;
         #endif
-        calculateFunc(st);
+        number operands[2];
+        size_t count = 0;
+
+        if (!st.empty()) {
+            operands[count] = st.top();
+            count++;
+            st.pop();
+        }
+        if (!st.empty()) {
+            operands[count] = st.top();
+            count++;
+            st.pop();
+        }
+
+        calculateFunc(operands, &count);
+        #ifdef TESTING
+            std::cout << "Число: "<< count << std::endl;
+        #endif
+        for (size_t i = 0; i < count; i++) {
+            #ifdef TESTING
+                std::cout << "Операнд: "<< operands[i] << std::endl;
+            #endif
+            st.push(operands[i]);
+        }
         #ifdef TESTING
             std::cout << "Токен: "<< st.top() << std::endl;
         #endif
     }
-    catch(const std::exception& e){
+    catch(const MathException& e){
         throw;
+    }
+    catch(const std::exception& e){
+         throw std::runtime_error("Error from dll function");
     }
     
 

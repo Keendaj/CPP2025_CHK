@@ -14,6 +14,9 @@
 using namespace calculator;
 
 bool Calculator::isFunction(crStr token) {
+    if(token.empty() || token == "(" || token == ")"){
+        return false;
+    }
     try
     {
         #ifdef TESTING
@@ -28,6 +31,11 @@ bool Calculator::isFunction(crStr token) {
 }
 
 bool Calculator::isOperator(crStr token) {
+    
+    if(token.empty() || token == "(" || token == ")"){
+        return false;
+    }
+
     if(token == "+" || token == "-" || token == "*" || token == "/"){
         return true;
     }
@@ -231,7 +239,9 @@ void Calculator::parse(crStr strToCalc) {
 
 number Calculator::calculate(crStr strToCalc){
     parse(strToCalc);
-
+    #ifdef TESTING
+        std::cout << "Строка: "<< parsedString << std::endl;
+    #endif
     std::istringstream iss(parsedString);
     std::stack<number> stack;
     std::string token;
