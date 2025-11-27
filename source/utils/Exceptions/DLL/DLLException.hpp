@@ -12,7 +12,7 @@ namespace calculator {
             DLLException(crStr message, crStr pluginName = "", crStr functionName = "", crStr dllPath = "")
             : CalculatorException(message), pluginName(pluginName), functionName(functionName), dllPath(dllPath) {}
 
-            const char* what() const noexcept override;
+            const char* what() const noexcept;
 
             str getTypename() const override { return "PluginException"; }
             str getPluginName() const { return pluginName; }
