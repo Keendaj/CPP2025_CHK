@@ -112,6 +112,13 @@ public:
             return std::invoke(_function, _instance.get(), unpacked...);
         }, argsTupleFinal);
     }
+    
+    using ReturnType = typename traits::returnType;
+
+    static const std::type_info& getReturnTypeInfo() {
+        return typeid(typename traits::returnType);
+    }
+    
 };
 
 template<typename C, typename F>
