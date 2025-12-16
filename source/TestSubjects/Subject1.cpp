@@ -14,7 +14,7 @@ int Subject1::calculate(int x, int y, int z)
     return result;
 }
 
-void Subject1::printMessage(const std::string& msg)
+void Subject1::printMessage(const char* msg)
 {
     std::cout << "printMessage: " << msg << std::endl;
 }

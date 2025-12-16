@@ -93,6 +93,11 @@ public:
         return it->second->getReturnType();
     }
     
+    bool hasCommand(const std::string& Name) const
+    {
+        return s.find(Name) != s.end();
+    }
+    
     bool unregister(const std::string& Name)
     {
         return s.erase(Name) > 0;
